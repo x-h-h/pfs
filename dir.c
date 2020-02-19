@@ -42,7 +42,7 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
 		brelse(bh);
 		continue;
-		skip:
+		//skip:
 		//ctx->pos += PFS_BLOCKSIZ - off; 
 	}
 	printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
