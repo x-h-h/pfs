@@ -31,21 +31,21 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 		}
 		do{
 			de = (struct pfs_dir_entry *)((char *)bh->b_data + off);
-			printk( "%s\n",pfs_get_de_name(de));
+			//printk( "%s\n",pfs_get_de_name(de));
 			if(de->d_ino){ 
 				if(!(dir_emit(ctx, pfs_get_de_name(de), de->d_len, (int32_t)le64_to_cpu(de->d_ino), DT_UNKNOWN))){
 					brelse(bh);
 					return 0;
 				}
 			}
-			printk("do while");
+			//printk("do while");
 			off += pfs_get_de_size(de);
 			ctx->pos += pfs_get_de_size(de);
 		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
 		brelse(bh);
 		continue;
 		skip:
-		printk("skip");
+		//printk("skip");
 		ctx->pos += PFS_BLOCKSIZ - off; 
 	}
 	printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
