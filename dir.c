@@ -80,6 +80,7 @@ pfs_find_entry(struct inode *dir, const struct qstr *qstr, int (*test)(const voi
 		if(test(qstr, de))
 			break;
 	}
+	printk("pfs_find_entry");
 	if(!off)
 		return NULL;
 	return de;
