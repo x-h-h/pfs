@@ -27,7 +27,7 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 		if(!(bh = sb_bread(inode->i_sb, dno / PFS_STRS_PER_BLOCK))){ 
 			pr_err("pfs: device %s: %s: failed to read block %lld of dir %lld\n", 
 				inode->i_sb->s_id, "pfs_readdir", pfs_block_number(ctx->pos), PFS_I(inode)->i_ino);
-			goto skip;
+			//goto skip;
 		}
 		do{
 			de = (struct pfs_dir_entry *)((char *)bh->b_data + off);
