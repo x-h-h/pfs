@@ -27,9 +27,9 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 		if(!(bh = sb_bread(inode->i_sb, dno / PFS_STRS_PER_BLOCK))){ 
 			pr_err("pfs: device %s: %s: failed to read block %lld of dir %lld\n", 
 				inode->i_sb->s_id, "pfs_readdir", pfs_block_number(ctx->pos), PFS_I(inode)->i_ino);
-			//goto skip;
+			goto skip;
 		}
-		do{
+		/*do{
 			de = (struct pfs_dir_entry *)((char *)bh->b_data + off);
 			if(de->d_ino){ 
 				if(!(dir_emit(ctx, pfs_get_de_name(de), de->d_len, (int32_t)le64_to_cpu(de->d_ino), DT_UNKNOWN))){
@@ -39,11 +39,11 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 			}
 			off += pfs_get_de_size(de);
 			ctx->pos += pfs_get_de_size(de);
-		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
+		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);*/
 		brelse(bh);
 		continue;
-		//skip:
-		//ctx->pos += PFS_BLOCKSIZ - off; 
+		skip:
+		ctx->pos += PFS_BLOCKSIZ - off; 
 	}
 	printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
 	return 0;
