@@ -292,7 +292,7 @@ out:
 }
 
 const struct file_operations pfs_dir_operations = {
-	.read		= generic_read_dir,
+	//.read		= generic_read_dir,
 	.iterate	= pfs_readdir,
 	.fsync		= generic_file_fsync,
 	.llseek		= generic_file_llseek,
