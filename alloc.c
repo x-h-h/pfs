@@ -55,13 +55,13 @@ static int64_t pfs_alloc0(struct super_block *sb, int type, int64_t *cntp, int64
 	}
 	*cntp = cpu_to_le64(cnt);
 	if(type){ 
-                cntp = &sbi->s_spb->s_bsize;
-                cnt = le64_to_cpu(sbi->s_spb->s_bsize) + PFS_STRS_PER_BLOCK;
-        }
+        cntp = &sbi->s_spb->s_bsize;
+        cnt = le64_to_cpu(sbi->s_spb->s_bsize) + PFS_STRS_PER_BLOCK;
+    }
     else{
-            cntp = &sbi->s_spb->s_iused;
-            cnt = le64_to_cpu(sbi->s_spb->s_iused) + 1;
-        }
+        cntp = &sbi->s_spb->s_iused;
+        cnt = le64_to_cpu(sbi->s_spb->s_iused) + 1;
+    }
     *cntp = cpu_to_le64(cnt); 
 	sbi->s_spb->s_utime = cpu_to_le64(CURRENT_TIME_SEC.tv_sec);
 	mark_buffer_dirty(sbi->s_sbh);
@@ -105,8 +105,8 @@ static int pfs_free0(struct super_block *sb, int64_t dno, int type, int64_t *cnt
 	}	
 	*cntp = cpu_to_le64(cnt); 
 	sbi->s_spb->s_utime = cpu_to_le64(CURRENT_TIME_SEC.tv_sec);
-        mark_buffer_dirty(*bhp);
-        mark_buffer_dirty(sbi->s_sbh);
+    mark_buffer_dirty(*bhp);
+    mark_buffer_dirty(sbi->s_sbh);
 	return 0;
 }
 
@@ -117,7 +117,7 @@ int pfs_clear_block(struct super_block *sb, int64_t dno, int size)
 	if(!(bh = sb_bread(sb, dno / PFS_INDS_PER_BLOCK)))
 		return -1;
 	memset((struct pfs_inode *)bh->b_data + dno % PFS_INDS_PER_BLOCK, 0, size);
-        mark_buffer_dirty(bh);
+    mark_buffer_dirty(bh);
 	brelse(bh);
 	return 0;
 }

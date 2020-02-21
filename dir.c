@@ -126,9 +126,9 @@ int pfs_empty_dir(struct inode *dir)
 	struct buffer_head *bh;
 
 	if(!(dno = pfs_get_block_number(dir, 0, 0))) 
-                return 0;
-        if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
-                return 0;
+        return 0;
+    if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
+        return 0;
 	for(i = 0; i < PFS_DIRHASHSIZ; i++){ 
 		if(((int64_t *)bh->b_data)[i])
 			break;
@@ -178,7 +178,7 @@ int pfs_add_link(struct dentry *dentry, struct inode *inode)
 	int	left, reclen;
 	struct buffer_head *bh;
 	struct pfs_dir_entry *de;
-        struct pfs_dir_hash_info hd, hd1;
+    struct pfs_dir_hash_info hd, hd1;
 	const struct qstr *qstr = &dentry->d_name;	
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
 	struct inode *dir = d_inode(dentry->d_parent);
@@ -226,8 +226,9 @@ add_dentry:
 			memmove(pfs_get_de_name(de), qstr->name, qstr->len + 1);
 			de->d_reclen = cpu_to_le16(left - reclen >= sizeof(*de) ? reclen : left);
 			*(hd.p) = ((int64_t *)bh->b_data)[hashval]; 
-                	((int64_t *)bh->b_data)[hashval] = cpu_to_le64(hd.off); 
-		}else{ 
+            ((int64_t *)bh->b_data)[hashval] = cpu_to_le64(hd.off); 
+		}
+		else{ 
 			de->d_ino = 0; 
 			de->d_reclen = cpu_to_le16(left); 
 			*(hd.p) = ((int64_t *)bh->b_data)[PFS_DIRHASH_UNUSED]; 
@@ -282,7 +283,7 @@ out:
 }
 
 const struct file_operations pfs_dir_operations = {
-	//.read		= generic_read_dir,
+	.read		= generic_read_dir,
 	.iterate	= pfs_readdir,
 	.fsync		= generic_file_fsync,
 	.llseek		= generic_file_llseek,

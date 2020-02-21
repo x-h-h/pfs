@@ -94,7 +94,7 @@ static int set_blocklist(int fd, int64_t bhead, int64_t end)
 		buf[0] = (int64_t)htole64(bhead + PFS_STRS_PER_BLOCK);
             if(m + PFS_STRS_PER_BLOCK * (PFS_INBLOCKS - 1) < end){
                 for(j = PFS_INBLOCKS -1; j > 0; j--, m += PFS_STRS_PER_BLOCK)
-                                buf[j] = (int64_t)htole64(m);
+                    buf[j] = (int64_t)htole64(m);
                 }
                 else{
                     for(j = 1; j < PFS_INBLOCKS && m < end; j++, m += PFS_STRS_PER_BLOCK)

@@ -341,11 +341,11 @@ static void __pfs_truncate_blocks(struct inode *inode)
 int64_t pfs_get_block_number(struct inode *inode, sector_t block, int create)
 {
 	int	depth;
-        int64_t offset[PFS_DEPTH];
+    int64_t offset[PFS_DEPTH];
 
-        if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
+    if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return 0;
-        if(!create)
+    if(!create)
 		return pfs_bmap(inode, offset, depth);
 	return pfs_bmap_alloc(inode, offset, depth);
 }
@@ -355,11 +355,11 @@ int pfs_truncate(struct inode *inode, int64_t size)
 	int err;
 
 	if(!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)))
-                return -EINVAL;
+        return -EINVAL;
 	if(S_ISLNK(inode->i_mode) && !inode->i_blocks)
 		return -EINVAL;
-        if(IS_APPEND(inode) || IS_IMMUTABLE(inode))
-                return -EPERM;
+    if(IS_APPEND(inode) || IS_IMMUTABLE(inode))
+        return -EPERM;
 	if((err = block_truncate_page(inode->i_mapping, size, pfs_get_block)))
 		return err;
 	truncate_setsize(inode, size);
@@ -370,11 +370,11 @@ int pfs_truncate(struct inode *inode, int64_t size)
 void pfs_truncate_blocks(struct inode *inode)
 {
 	if(!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)))
-                return;
+        return;
 	if(S_ISLNK(inode->i_mode) && !inode->i_blocks)
 		return;
-        if(IS_APPEND(inode) || IS_IMMUTABLE(inode))
-            return;
+    if(IS_APPEND(inode) || IS_IMMUTABLE(inode))
+        return;
 	__pfs_truncate_blocks(inode);
 }
 
@@ -482,17 +482,17 @@ void pfs_evict_inode(struct inode *inode)
 
 static void pfs_write_failed(struct address_space *mapping, loff_t to)
 {
-        struct inode *inode = mapping->host;
+    struct inode *inode = mapping->host;
 
-        if(to > inode->i_size){
-                truncate_pagecache(inode, inode->i_size);
-                pfs_truncate_blocks(inode);
-        }
+    if(to > inode->i_size){
+        truncate_pagecache(inode, inode->i_size);
+        pfs_truncate_blocks(inode);
+    }
 }
 
 static int pfs_readpage(struct file *file, struct page *page)
 {
-        return block_read_full_page(page, pfs_get_block);
+    return block_read_full_page(page, pfs_get_block);
 }
 
 static int pfs_writepage(struct page *page, struct writeback_control *wbc)
@@ -503,12 +503,12 @@ static int pfs_writepage(struct page *page, struct writeback_control *wbc)
 static int pfs_write_begin(struct file *file, struct address_space *mapping, loff_t pos, unsigned len, unsigned flags,
                 struct page **pagep, void **fsdata)
 {
-        int ret;
+    int ret;
 
-        ret = block_write_begin(mapping, pos, len, flags, pagep, pfs_get_block);
-        if(unlikely(ret))
-                pfs_write_failed(mapping, pos + len);
-        return ret;
+    ret = block_write_begin(mapping, pos, len, flags, pagep, pfs_get_block);
+    if(unlikely(ret))
+        pfs_write_failed(mapping, pos + len);
+    return ret;
 }
 
 static sector_t pfs_block_bmap(struct address_space *mapping, sector_t block)
@@ -517,9 +517,9 @@ static sector_t pfs_block_bmap(struct address_space *mapping, sector_t block)
 }
 
 const struct address_space_operations pfs_aops = {
-        .readpage	= pfs_readpage,
-        .writepage 	= pfs_writepage,
-        .write_begin 	= pfs_write_begin, 
-        .write_end 	= generic_write_end,
-        .bmap 		= pfs_block_bmap,
+    .readpage	= pfs_readpage,
+    .writepage 	= pfs_writepage,
+    .write_begin 	= pfs_write_begin, 
+    .write_end 	= generic_write_end,
+    .bmap 		= pfs_block_bmap,
 };
