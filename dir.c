@@ -39,6 +39,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 			}
 			//printk("do while");
 			off += pfs_get_de_size(de);
+			printk("off2=%d\n",off);
 			ctx->pos += pfs_get_de_size(de);
 		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
 		brelse(bh);
