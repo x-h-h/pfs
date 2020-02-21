@@ -10,7 +10,6 @@
 #include	"pfs.h"
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("颜文泽");
 MODULE_VERSION("1.0");
 
 static struct kmem_cache *pfs_inode_cachep;
