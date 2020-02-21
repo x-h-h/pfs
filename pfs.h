@@ -29,62 +29,53 @@ struct pfs_dir_hash_info{
 	struct buffer_head *bh; 
 };
 
-static inline struct pfs_sb_info *
-PFS_SB(struct super_block *sb)
+static inline struct pfs_sb_info * PFS_SB(struct super_block *sb)
 {
 	return sb->s_fs_info;
 }
 
-static inline struct pfs_inode_info *
-PFS_I(struct inode *inode)
+static inline struct pfs_inode_info * PFS_I(struct inode *inode)
 {
 	return list_entry(inode, struct pfs_inode_info, vfs_inode);
 }
 
-static inline int64_t
-pfs_get_de_offset(struct pfs_dir_entry *de)
+static inline int64_t pfs_get_de_offset(struct pfs_dir_entry *de)
 {
 	return le64_to_cpu(de->d_next);
 }
 
-static inline int16_t
-pfs_get_reclen(int8_t len)
+static inline int16_t pfs_get_reclen(int8_t len)
 {
 	return len < PFS_DIR_RECLEN ? sizeof(struct pfs_dir_entry) : sizeof(struct pfs_dir_entry) + 1 + len; 
 }
 
-static inline int16_t
-pfs_get_de_size(struct pfs_dir_entry *de)
+static inline int16_t pfs_get_de_size(struct pfs_dir_entry *de)
 {
 	return le16_to_cpu(de->d_reclen);
 }
 
-static inline char *
-pfs_get_de_name(struct pfs_dir_entry *de)
+static inline char * pfs_get_de_name(struct pfs_dir_entry *de)
 {
 	return de->d_len < PFS_DIR_RECLEN ? de->d_name : (char *)de + sizeof(*de); 
 }
 
-static inline int
-pfs_match(const void *qstr, const void *de)
+static inline int pfs_match(const void *qstr, const void *de)
 {
-        if(((struct qstr *)qstr)->len != ((struct pfs_dir_entry *)de)->d_len) 
-                return 0;
-        return !memcmp(((struct qstr *)qstr)->name, pfs_get_de_name((struct pfs_dir_entry *)de), ((struct qstr *)qstr)->len);
+    if(((struct qstr *)qstr)->len != ((struct pfs_dir_entry *)de)->d_len) 
+        return 0;
+    return !memcmp(((struct qstr *)qstr)->name, pfs_get_de_name((struct pfs_dir_entry *)de), ((struct qstr *)qstr)->len);
 }
 
-static inline int
-pfs_find_empty_entry(const void *qstr, const void *de)
+static inline int pfs_find_empty_entry(const void *qstr, const void *de)
 {
-        return pfs_get_de_size((struct pfs_dir_entry *)de) >= pfs_get_reclen(((struct qstr *)qstr)->len);
+    return pfs_get_de_size((struct pfs_dir_entry *)de) >= pfs_get_reclen(((struct qstr *)qstr)->len);
 }
 
-static inline void
-pfs_add_hdentry(struct pfs_dir_hash_info *hdp, int64_t *p, int64_t off, struct buffer_head *bh)
+static inline void pfs_add_hdentry(struct pfs_dir_hash_info *hdp, int64_t *p, int64_t off, struct buffer_head *bh)
 {
-        hdp->p = p;
-        hdp->bh = bh;
-        hdp->off = off;
+    hdp->p = p;
+    hdp->bh = bh;
+    hdp->off = off;
 }
 
 extern int64_t	pfs_alloc_zero(struct super_block *sb);

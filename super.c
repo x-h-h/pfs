@@ -9,26 +9,20 @@
 #include	<linux/buffer_head.h>
 #include	"pfs.h"
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("颜文泽");
-MODULE_VERSION("1.0");
 
 static struct kmem_cache *pfs_inode_cachep;
 
-static inline int64_t
-pfs_get_blocks(struct pfs_sb_info *sbi)
+static inline int64_t pfs_get_blocks(struct pfs_sb_info *sbi)
 {
 	return le64_to_cpu(sbi->s_spb->s_fsize) - le64_to_cpu(sbi->s_spb->s_isize) - sbi->s_sbh->b_blocknr * PFS_STRS_PER_BLOCK;
 }
 
-static int
-pfs_recovery(struct super_block *s)
+static int pfs_recovery(struct super_block *s)
 {
 	return 0;
 }
 
-static int32_t
-pfs_get_rsiz(int8_t *vbr)
+static int32_t pfs_get_rsiz(int8_t *vbr)
 {
 	int32_t	rsiz;
 
@@ -38,22 +32,19 @@ pfs_get_rsiz(int8_t *vbr)
 	return rsiz;
 }
 
-static void
-pfs_i_callback(struct rcu_head *head)
+static void pfs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
 	kmem_cache_free(pfs_inode_cachep, PFS_I(inode));
 }
 
-static void
-init_once(void *foo)
+static void init_once(void *foo)
 {
 	struct pfs_inode_info *ei = (struct pfs_inode_info *)foo;
 	inode_init_once(&ei->vfs_inode);
 }
 
-static int
-init_inodecache(void)
+static int init_inodecache(void)
 {
 	if(!(pfs_inode_cachep = kmem_cache_create("pfs_inode_cache", 
 		sizeof(struct pfs_inode_info), 0, (SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD), init_once)))
@@ -61,15 +52,13 @@ init_inodecache(void)
 	return 0;
 }
 
-static void
-destroy_inodecache(void)
+static void destroy_inodecache(void)
 {
 	rcu_barrier();
 	kmem_cache_destroy(pfs_inode_cachep);
 }
 
-static struct inode *
-pfs_alloc_inode(struct super_block *sb)
+static struct inode * pfs_alloc_inode(struct super_block *sb)
 {
         struct pfs_inode_info   *ei;
 
@@ -78,14 +67,12 @@ pfs_alloc_inode(struct super_block *sb)
         return &ei->vfs_inode;
 }
 
-static void
-pfs_destroy_inode(struct inode *inode)
+static void pfs_destroy_inode(struct inode *inode)
 {
 	call_rcu(&inode->i_rcu, pfs_i_callback);
 }
 
-static void
-pfs_put_super(struct super_block *sb)
+static void pfs_put_super(struct super_block *sb)
 {
 	struct pfs_sb_info	*sbi = PFS_SB(sb);
 	
@@ -97,11 +84,10 @@ pfs_put_super(struct super_block *sb)
 	sb->s_fs_info = NULL;
 }
 
-static int
-pfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+static int pfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 {
-        struct super_block      *s = dentry->d_sb;
-        struct pfs_sb_info      *sbi = PFS_SB(s);
+    struct super_block *s = dentry->d_sb;
+    struct pfs_sb_info *sbi = PFS_SB(s);
 	u64	id = huge_encode_dev(s->s_bdev->bd_dev);
 
 	mutex_lock(&sbi->s_lock);
@@ -119,8 +105,7 @@ pfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	return 0;	
 }
 
-static int
-pfs_remount(struct super_block *s, int *flags, char *data)
+static int pfs_remount(struct super_block *s, int *flags, char *data)
 {
 	struct pfs_sb_info	*sbi = PFS_SB(s);
 
@@ -140,8 +125,7 @@ static const struct super_operations pfs_super_ops = {
 	.remount_fs	= pfs_remount,
 };
 
-static int
-pfs_fill_super(struct super_block *s, void *data, int silent)
+static int pfs_fill_super(struct super_block *s, void *data, int silent)
 {
 	int	rev;
 	int	ret = -EINVAL;
@@ -223,8 +207,7 @@ out:
 	return ret;
 }
 
-static struct dentry *
-pfs_mount(struct file_system_type *fs_type, int flags, const char *dev_name, void *data)
+static struct dentry * pfs_mount(struct file_system_type *fs_type, int flags, const char *dev_name, void *data)
 {
         return mount_bdev(fs_type, flags, dev_name, data, pfs_fill_super); 
 }
@@ -238,8 +221,7 @@ static struct file_system_type pfs_fs_type = {
 	.fs_flags 	= FS_REQUIRES_DEV,
 };
 
-static int __init
-init_pfs_fs(void)
+static int __init init_pfs_fs(void)
 {
 	int	err;
 
@@ -250,8 +232,7 @@ init_pfs_fs(void)
 	return err;
 }
 
-static void __exit
-exit_pfs_fs(void)
+static void __exit exit_pfs_fs(void)
 {
 	unregister_filesystem(&pfs_fs_type); 
 	destroy_inodecache();

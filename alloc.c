@@ -6,14 +6,13 @@
 /*
  * both block and inode
  */
-static int64_t
-pfs_alloc0(struct super_block *sb, int type, int64_t *cntp, int64_t *headp,
+static int64_t pfs_alloc0(struct super_block *sb, int type, int64_t *cntp, int64_t *headp,
         struct buffer_head **bhp, int64_t **freep)
 {
 	int64_t	tm, dno;
 	struct buffer_head *bh;
-        int64_t cnt = le64_to_cpu(*cntp);
-        struct pfs_sb_info *sbi = PFS_SB(sb);
+    int64_t cnt = le64_to_cpu(*cntp);
+    struct pfs_sb_info *sbi = PFS_SB(sb);
 
 	if(!cnt){ 
 		int	i;
@@ -58,18 +57,18 @@ pfs_alloc0(struct super_block *sb, int type, int64_t *cntp, int64_t *headp,
 	if(type){ 
                 cntp = &sbi->s_spb->s_bsize;
                 cnt = le64_to_cpu(sbi->s_spb->s_bsize) + PFS_STRS_PER_BLOCK;
-        }else{
-                cntp = &sbi->s_spb->s_iused;
-                cnt = le64_to_cpu(sbi->s_spb->s_iused) + 1;
         }
-        *cntp = cpu_to_le64(cnt); 
+    else{
+            cntp = &sbi->s_spb->s_iused;
+            cnt = le64_to_cpu(sbi->s_spb->s_iused) + 1;
+        }
+    *cntp = cpu_to_le64(cnt); 
 	sbi->s_spb->s_utime = cpu_to_le64(CURRENT_TIME_SEC.tv_sec);
 	mark_buffer_dirty(sbi->s_sbh);
 	return dno;
 }
 
-static int
-pfs_free0(struct super_block *sb, int64_t dno, int type, int64_t *cntp, int64_t *headp, 
+static int pfs_free0(struct super_block *sb, int64_t dno, int type, int64_t *cntp, int64_t *headp, 
 	struct buffer_head **bhp, int64_t **freep)
 {
 	int32_t	cnt = le64_to_cpu(*cntp);
@@ -90,13 +89,17 @@ pfs_free0(struct super_block *sb, int64_t dno, int type, int64_t *cntp, int64_t 
 		*freep = type ? (int64_t *)bh->b_data : (int64_t *)((struct pfs_inode *)bh->b_data + dno % PFS_INDS_PER_BLOCK);
 		(*freep)[0] = *headp; 
 		*headp = cpu_to_le64(dno);
-	}else
+	}
+	else
 		(*freep)[cnt++] = cpu_to_le64(dno);
+
 	*cntp = cpu_to_le64(cnt);
+
 	if(type){ 
 		cntp = &sbi->s_spb->s_bsize;
 		cnt = le64_to_cpu(sbi->s_spb->s_bsize) - PFS_STRS_PER_BLOCK;
-	}else{
+	}
+	else{
 		cntp = &sbi->s_spb->s_iused;
 		cnt = le64_to_cpu(sbi->s_spb->s_iused) - 1;
 	}	
@@ -107,8 +110,7 @@ pfs_free0(struct super_block *sb, int64_t dno, int type, int64_t *cntp, int64_t 
 	return 0;
 }
 
-int
-pfs_clear_block(struct super_block *sb, int64_t dno, int size)
+int pfs_clear_block(struct super_block *sb, int64_t dno, int size)
 {
 	struct buffer_head *bh;
 
@@ -120,8 +122,7 @@ pfs_clear_block(struct super_block *sb, int64_t dno, int size)
 	return 0;
 }
 
-int64_t
-pfs_alloc_zero(struct super_block *sb)
+int64_t pfs_alloc_zero(struct super_block *sb)
 {
 	int64_t	dno;
 
@@ -134,8 +135,7 @@ pfs_alloc_zero(struct super_block *sb)
 	return dno;
 }
 
-int64_t
-pfs_alloc(struct super_block *sb, int type)
+int64_t pfs_alloc(struct super_block *sb, int type)
 {
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	struct pfs_super_block *spb = sbi->s_spb;
@@ -144,8 +144,7 @@ pfs_alloc(struct super_block *sb, int type)
 		type ? &sbi->s_bbh : &sbi->s_ibh, type ? &sbi->s_bfree : &sbi->s_ifree);
 }
 
-int
-pfs_free(struct super_block *sb, int64_t dno, int type)
+int pfs_free(struct super_block *sb, int64_t dno, int type)
 {
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	struct pfs_super_block *spb = sbi->s_spb;

@@ -56,23 +56,23 @@ struct pfs_super_block{
 };
 
 struct pfs_inode{	
-        int32_t i_uid; 
-        int32_t i_gid;
-        int32_t i_mode;
+    int32_t i_uid; 
+    int32_t i_gid;
+    int32_t i_mode;
 	int32_t	i_esiz;		
-        int32_t i_nlink;
+    int32_t i_nlink;
 	int64_t	i_blocks;	
-        int64_t i_size;
-        int64_t i_atime;
-        int64_t i_mtime;
-        int64_t i_ctime;
+    int64_t i_size;
+    int64_t i_atime;
+    int64_t i_mtime;
+    int64_t i_ctime;
 	int64_t	i_otime;
-        int64_t	i_ext[PFS_NEXT];   	
-        int64_t i_addr[PFS_NADDR]; 
-        char	i_pad[42];
+    int64_t	i_ext[PFS_NEXT];   	
+    int64_t i_addr[PFS_NADDR]; 
+    char	i_pad[42];
 };
 
-#define PFS_DIR_RECLEN     (sizeof(struct pfs_dir_entry) - (int)((struct pfs_dir_entry *)0)->d_name) 
+#define PFS_DIR_RECLEN (sizeof(struct pfs_dir_entry) - (int)((struct pfs_dir_entry *)0)->d_name) 
 struct pfs_dir_entry{	
 	int64_t	d_ino; 	
 	int64_t	d_next; 
@@ -81,8 +81,7 @@ struct pfs_dir_entry{
 	char	d_name[5];
 };
 
-static inline int
-pfs_hash(const char *str)
+static inline int pfs_hash(const char *str)
 {
 	uint32_t	hash;
 

@@ -4,14 +4,12 @@
 #include	<linux/buffer_head.h>
 #include	"pfs.h"
 
-static inline int64_t
-pfs_block_number(int64_t offset)
+static inline int64_t pfs_block_number(int64_t offset)
 {
 	return offset >> PFS_BLOCKSFT;
 }
 
-static int
-pfs_readdir(struct file *file, struct dir_context *ctx)
+static int pfs_readdir(struct file *file, struct dir_context *ctx)
 {
 	int64_t dno;
 	unsigned long off;
@@ -52,8 +50,7 @@ pfs_readdir(struct file *file, struct dir_context *ctx)
 	return 0;
 }
 
-struct pfs_dir_entry *
-pfs_find_entry(struct inode *dir, const struct qstr *qstr, int (*test)(const void *, const void *), 
+struct pfs_dir_entry * pfs_find_entry(struct inode *dir, const struct qstr *qstr, int (*test)(const void *, const void *), 
 	struct pfs_dir_hash_info *hdp, struct pfs_dir_hash_info *hdp1)
 {
 	int64_t	off;
@@ -91,8 +88,7 @@ out:
 	return NULL;
 }
 
-int
-pfs_make_empty(struct inode *inode)
+int pfs_make_empty(struct inode *inode)
 {
 	int64_t	dno;
 	struct buffer_head *bh;
@@ -123,8 +119,7 @@ pfs_make_empty(struct inode *inode)
 	return 0;
 }
 
-int
-pfs_empty_dir(struct inode *dir)
+int pfs_empty_dir(struct inode *dir)
 {
 	int	i;
 	int64_t	dno;
@@ -142,8 +137,7 @@ pfs_empty_dir(struct inode *dir)
 	return i == PFS_DIRHASHSIZ; 
 }
 
-int64_t
-pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
+int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 {
 	int64_t	ino;
 	struct buffer_head *bh;
@@ -175,11 +169,8 @@ pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 	return ino;
 }
 
-/*
- * it's too bad
- */
-int
-pfs_add_link(struct dentry *dentry, struct inode *inode)
+
+int pfs_add_link(struct dentry *dentry, struct inode *inode)
 {
 	int	err;
 	int64_t	dno;
@@ -196,24 +187,24 @@ pfs_add_link(struct dentry *dentry, struct inode *inode)
 #endif
 
 	err = -EIO;
-        if(!(dno = pfs_get_block_number(dir, 0, 0))) 
-                return err;
-        if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
-                return err;
+    if(!(dno = pfs_get_block_number(dir, 0, 0))) 
+        return err;
+    if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
+        return err;
 	hashval = pfs_hash(qstr->name); 
-        pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + PFS_DIRHASH_UNUSED * sizeof(int64_t)), 0, bh); 
-        if((de = pfs_find_entry(dir, qstr, pfs_find_empty_entry, &hd, &hd1))){ 
+    pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + PFS_DIRHASH_UNUSED * sizeof(int64_t)), 0, bh); 
+    if((de = pfs_find_entry(dir, qstr, pfs_find_empty_entry, &hd, &hd1))){ 
 		*(hd1.p) = *(hd.p); 
 		mark_buffer_dirty_inode(hd1.bh, dir);
 		*(hd.p) = ((int64_t *)bh->b_data)[hashval]; 
-        	((int64_t *)bh->b_data)[hashval] = cpu_to_le64(hd.off); 
+        ((int64_t *)bh->b_data)[hashval] = cpu_to_le64(hd.off); 
 		mark_buffer_dirty_inode(bh, dir);
 		de->d_len = qstr->len; 
 		de->d_ino = cpu_to_le64(PFS_I(inode)->i_ino);
 		memmove(pfs_get_de_name(de), qstr->name, qstr->len + 1); 
 		mark_buffer_dirty_inode(hd.bh, dir); 
-        	dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
-        	mark_inode_dirty(dir);
+        dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
+        mark_inode_dirty(dir);
 		goto out;
 	} 
 expand:
@@ -259,19 +250,18 @@ add_dentry:
 	goto add_dentry;
 out:
 	err = 0;
-        if(hd.bh)
-                brelse(hd.bh);
-        if(hd1.bh)
-                brelse(hd1.bh);
-        if(!de)
-                goto expand;
+    if(hd.bh)
+        brelse(hd.bh);
+    if(hd1.bh)
+        brelse(hd1.bh);
+    if(!de)
+        goto expand;
 out1:
-        brelse(bh);
-        return err;
+    brelse(bh);
+    return err;
 }
 
-int
-pfs_delete_entry(struct inode *dir, struct pfs_dir_entry *de, struct buffer_head *bh, 
+int pfs_delete_entry(struct inode *dir, struct pfs_dir_entry *de, struct buffer_head *bh, 
 	struct pfs_dir_hash_info *hdp, struct pfs_dir_hash_info *hdp1)
 {
 	*(hdp1->p) = *(hdp->p); 

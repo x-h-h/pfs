@@ -12,8 +12,7 @@ typedef struct{
 	struct buffer_head *bh;
 }Indirect;
 
-static inline int
-pfs_depth(int x)
+static inline int pfs_depth(int x)
 {
 	if(x < (int)PFS_D_BLOCK) 
 		return 1;
@@ -22,15 +21,13 @@ pfs_depth(int x)
 	return (x - (int)PFS_IND_BLOCK) / PFS_DIND_BLOCK + 3; 
 }
 
-static inline void
-pfs_add_chain(Indirect *p, struct buffer_head *bh, sector_t *v)
+static inline void pfs_add_chain(Indirect *p, struct buffer_head *bh, sector_t *v)
 {
 	p->bh = bh;
 	p->key = le64_to_cpu(*(p->p = v)); 
 }
 
-static inline void
-pfs_free_chain(Indirect *from, Indirect *to)
+static inline void pfs_free_chain(Indirect *from, Indirect *to)
 {
 	while(from > to){
 		brelse(from->bh);
@@ -38,22 +35,19 @@ pfs_free_chain(Indirect *from, Indirect *to)
 	}
 }
 
-static int
-pfs_test(struct inode *inode, void *data)
+static int pfs_test(struct inode *inode, void *data)
 {
 	return PFS_I(inode)->i_ino == *((int64_t *)data);
 }
 
-static int
-pfs_set(struct inode *inode, void *data)
+static int pfs_set(struct inode *inode, void *data)
 {
 	inode->i_ino = *((uint32_t *)data);
 	PFS_I(inode)->i_ino = *((int64_t *)data);
 	return 0;	
 }
 
-static int
-pfs_atomic_alloc(struct inode *inode, Indirect *p)
+static int pfs_atomic_alloc(struct inode *inode, Indirect *p)
 {
 	int err = 0;
 	int64_t	dno;
@@ -79,8 +73,7 @@ out:
 	return err;
 }
 
-static int
-pfs_atomic_free(struct inode *inode, Indirect *p)
+static int pfs_atomic_free(struct inode *inode, Indirect *p)
 {
 	int err = 0;
 	struct super_block *sb = inode->i_sb;
@@ -102,8 +95,7 @@ out:
 	return 0;
 }
 
-static int
-pfs_bmap_free(struct inode *inode, Indirect *q, int64_t *offset, int depth, int whole)
+static int pfs_bmap_free(struct inode *inode, Indirect *q, int64_t *offset, int depth, int whole)
 {
 	if(--depth){
 		int	i;
@@ -137,8 +129,7 @@ pfs_bmap_free(struct inode *inode, Indirect *q, int64_t *offset, int depth, int 
 	return 0;
 }
 
-static int64_t
-pfs_bmap_alloc(struct inode *inode, int64_t *offset, int depth)
+static int64_t pfs_bmap_alloc(struct inode *inode, int64_t *offset, int depth)
 {
 	int64_t	tm;
 	Indirect chain[PFS_DEPTH], *q = chain;
@@ -164,8 +155,7 @@ no_block:
         return 0;
 }
 
-static int64_t
-pfs_bmap(struct inode *inode, int64_t *offset, int depth)
+static int64_t pfs_bmap(struct inode *inode, int64_t *offset, int depth)
 {
 	Indirect chain[PFS_DEPTH], *q = chain;
 
@@ -188,8 +178,7 @@ no_block:
 	return 0;
 }
 
-static int
-pfs_block_to_path(struct inode *inode, sector_t block, int64_t *offsets)
+static int pfs_block_to_path(struct inode *inode, sector_t block, int64_t *offsets)
 {
 	int	n = 0; 
 
@@ -222,8 +211,7 @@ pfs_block_to_path(struct inode *inode, sector_t block, int64_t *offsets)
 	return n;
 }
 
-static int
-pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create)
+static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create)
 {
 	int64_t	dno;
 	int	depth;
@@ -244,8 +232,7 @@ out:
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0) 
-static void *
-pfs_follow_link(struct dentry *dentry, struct nameidata *nd)
+static void * pfs_follow_link(struct dentry *dentry, struct nameidata *nd)
 {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
         struct inode *inode = d_inode(dentry);
@@ -261,8 +248,7 @@ const struct inode_operations simple_symlink_inode_operations = {
         .readlink = generic_readlink
 };
 #endif
-void
-pfs_set_inode(struct inode *inode, dev_t rdev)
+void pfs_set_inode(struct inode *inode, dev_t rdev)
 {
 	if(S_ISREG(inode->i_mode)){
 		inode->i_fop = &pfs_file_operations;
@@ -289,51 +275,51 @@ pfs_set_inode(struct inode *inode, dev_t rdev)
 		init_special_inode(inode, inode->i_mode, rdev);
 }
 
-static int
-pfs_update_inode(struct inode *inode, struct writeback_control *wbc)
+static int pfs_update_inode(struct inode *inode, struct writeback_control *wbc)
 {
-        int     i;
-        struct buffer_head      *bh;
-        struct pfs_inode        *ip;
+    int     i;
+    struct buffer_head      *bh;
+    struct pfs_inode        *ip;
 
 	if(!(bh = sb_bread(inode->i_sb, PFS_I(inode)->i_ino / PFS_INDS_PER_BLOCK))){
 		pr_warn("pfs: device %s: %s: failed to read inode %lld\n", inode->i_sb->s_id, "pfs_update_inode", PFS_I(inode)->i_ino);
 		return -EIO;
 	}
 	ip = (struct pfs_inode *)bh->b_data + PFS_I(inode)->i_ino % PFS_INDS_PER_BLOCK;
-        ip->i_mode = cpu_to_le32(inode->i_mode);
-        ip->i_uid = cpu_to_le32(i_uid_read(inode));
-        ip->i_gid = cpu_to_le32(i_gid_read(inode));
-        ip->i_nlink = cpu_to_le32(inode->i_nlink);
+    ip->i_mode = cpu_to_le32(inode->i_mode);
+    ip->i_uid = cpu_to_le32(i_uid_read(inode));
+    ip->i_gid = cpu_to_le32(i_gid_read(inode));
+    ip->i_nlink = cpu_to_le32(inode->i_nlink);
 	ip->i_size = cpu_to_le64(inode->i_size);
 	ip->i_blocks = cpu_to_le64(inode->i_blocks);
-        ip->i_atime = cpu_to_le64(inode->i_atime.tv_sec);
-        ip->i_mtime = cpu_to_le64(inode->i_mtime.tv_sec);
-        ip->i_ctime = cpu_to_le64(inode->i_ctime.tv_sec);
-        if(S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)){
-                ip->i_addr[0] = (int64_t)cpu_to_le32(new_encode_dev(inode->i_rdev));
-        }else if(S_ISLNK(inode->i_mode) && !inode->i_blocks){ 
+    ip->i_atime = cpu_to_le64(inode->i_atime.tv_sec);
+    ip->i_mtime = cpu_to_le64(inode->i_mtime.tv_sec);
+    ip->i_ctime = cpu_to_le64(inode->i_ctime.tv_sec);
+    if(S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)){
+        ip->i_addr[0] = (int64_t)cpu_to_le32(new_encode_dev(inode->i_rdev));
+    }
+    else if(S_ISLNK(inode->i_mode) && !inode->i_blocks){ 
 		memmove(ip->i_addr, PFS_I(inode)->i_addr, sizeof(ip->i_addr)); 
-	}else{
-                for(i = 0; i < PFS_NADDR; i++)
-			ip->i_addr[i] = cpu_to_le64(PFS_I(inode)->i_addr[i]);
-        }
-        mark_buffer_dirty(bh);
-        if(wbc->sync_mode == WB_SYNC_ALL && buffer_dirty(bh)){ 
-                sync_dirty_buffer(bh);
-                if(buffer_req(bh) && !buffer_uptodate(bh)){ 
+	}
+	else{
+            for(i = 0; i < PFS_NADDR; i++)
+				ip->i_addr[i] = cpu_to_le64(PFS_I(inode)->i_addr[i]);
+    }
+    mark_buffer_dirty(bh);
+    if(wbc->sync_mode == WB_SYNC_ALL && buffer_dirty(bh)){ 
+        sync_dirty_buffer(bh);
+        if(buffer_req(bh) && !buffer_uptodate(bh)){ 
 			pr_warn("pfs: device %s: %s: failed to update inode %lld\n", 
-				inode->i_sb->s_id, "pfs_update_inode", PFS_I(inode)->i_ino);
-                        brelse(bh);
-                        return -EIO;
-                }
+			inode->i_sb->s_id, "pfs_update_inode", PFS_I(inode)->i_ino);
+            brelse(bh);
+            return -EIO;
         }
-        brelse(bh);
-        return 0;
+    }
+    brelse(bh);
+    return 0;
 }
 
-static void
-__pfs_truncate_blocks(struct inode *inode)
+static void __pfs_truncate_blocks(struct inode *inode)
 {
 	int	i;
 	Indirect chain;
@@ -352,8 +338,7 @@ __pfs_truncate_blocks(struct inode *inode)
 	mark_inode_dirty(inode);
 }
 
-int64_t
-pfs_get_block_number(struct inode *inode, sector_t block, int create)
+int64_t pfs_get_block_number(struct inode *inode, sector_t block, int create)
 {
 	int	depth;
         int64_t offset[PFS_DEPTH];
@@ -365,8 +350,7 @@ pfs_get_block_number(struct inode *inode, sector_t block, int create)
 	return pfs_bmap_alloc(inode, offset, depth);
 }
 
-int
-pfs_truncate(struct inode *inode, int64_t size)
+int pfs_truncate(struct inode *inode, int64_t size)
 {
 	int err;
 
@@ -383,20 +367,18 @@ pfs_truncate(struct inode *inode, int64_t size)
 	return 0;
 }
 
-void
-pfs_truncate_blocks(struct inode *inode)
+void pfs_truncate_blocks(struct inode *inode)
 {
 	if(!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)))
                 return;
 	if(S_ISLNK(inode->i_mode) && !inode->i_blocks)
 		return;
         if(IS_APPEND(inode) || IS_IMMUTABLE(inode))
-                return;
+            return;
 	__pfs_truncate_blocks(inode);
 }
 
-struct inode *
-pfs_iget(struct super_block *sb, int64_t ino)
+struct inode * pfs_iget(struct super_block *sb, int64_t ino)
 {
 	int	i;
 	struct inode	*inode;
@@ -434,8 +416,7 @@ pfs_iget(struct super_block *sb, int64_t ino)
 	return inode;
 }
 
-int
-pfs_free_inode(struct inode *inode)
+int pfs_free_inode(struct inode *inode)
 {
 	int	err;
 	struct pfs_sb_info *sbi = PFS_SB(inode->i_sb);
@@ -446,8 +427,7 @@ pfs_free_inode(struct inode *inode)
 	return err;
 }
 
-struct inode *
-pfs_new_inode(struct inode *dir, umode_t mode)
+struct inode * pfs_new_inode(struct inode *dir, umode_t mode)
 {
 	int64_t	ino;
 	struct inode *inode;
@@ -477,14 +457,12 @@ err:
 	return ERR_PTR(-EIO);	
 }
 
-int
-pfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+int pfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 {
 	return pfs_update_inode(inode, wbc);
 }
 
-void
-pfs_evict_inode(struct inode *inode)
+void pfs_evict_inode(struct inode *inode)
 {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
 	truncate_inode_pages_final(&inode->i_data);
@@ -502,8 +480,7 @@ pfs_evict_inode(struct inode *inode)
 		pfs_free_inode(inode);
 }
 
-static void
-pfs_write_failed(struct address_space *mapping, loff_t to)
+static void pfs_write_failed(struct address_space *mapping, loff_t to)
 {
         struct inode *inode = mapping->host;
 
@@ -513,20 +490,17 @@ pfs_write_failed(struct address_space *mapping, loff_t to)
         }
 }
 
-static int 
-pfs_readpage(struct file *file, struct page *page)
+static int pfs_readpage(struct file *file, struct page *page)
 {
         return block_read_full_page(page, pfs_get_block);
 }
 
-static int
-pfs_writepage(struct page *page, struct writeback_control *wbc)
+static int pfs_writepage(struct page *page, struct writeback_control *wbc)
 {
 	return block_write_full_page(page, pfs_get_block, wbc);
 }
 
-static int
-pfs_write_begin(struct file *file, struct address_space *mapping, loff_t pos, unsigned len, unsigned flags,
+static int pfs_write_begin(struct file *file, struct address_space *mapping, loff_t pos, unsigned len, unsigned flags,
                 struct page **pagep, void **fsdata)
 {
         int ret;
@@ -537,8 +511,7 @@ pfs_write_begin(struct file *file, struct address_space *mapping, loff_t pos, un
         return ret;
 }
 
-static sector_t
-pfs_block_bmap(struct address_space *mapping, sector_t block)
+static sector_t pfs_block_bmap(struct address_space *mapping, sector_t block)
 {
 	return generic_block_bmap(mapping, block, pfs_get_block);
 }

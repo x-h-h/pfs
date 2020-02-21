@@ -12,8 +12,7 @@
 #include	<sys/stat.h>
 #include	"pfs_fs.h"
 
-static int32_t
-pfs_bread(int fd, int64_t bno, void *buf, int32_t cnt)
+static int32_t pfs_bread(int fd, int64_t bno, void *buf, int32_t cnt)
 {
 	if(cnt < 0 || buf == NULL)
 		return -1;
@@ -26,23 +25,21 @@ pfs_bread(int fd, int64_t bno, void *buf, int32_t cnt)
 	return 0;
 }
 
-static int32_t
-pfs_bwrite_nolseek(int fd, int64_t bno, const void *buf, int32_t cnt)
+static int32_t pfs_bwrite_nolseek(int fd, int64_t bno, const void *buf, int32_t cnt)
 {
-        if(cnt < 0 || buf == NULL)
-                return -1;
-        if(bno < 0 || bno * PFS_SECTORSIZ < 0) 
-                return -1;
-        if(cnt && write(fd, buf, cnt * PFS_SECTORSIZ) != cnt * PFS_SECTORSIZ)
-                return -1;
-        return 0;
+    if(cnt < 0 || buf == NULL)
+        return -1;
+    if(bno < 0 || bno * PFS_SECTORSIZ < 0) 
+        return -1;
+    if(cnt && write(fd, buf, cnt * PFS_SECTORSIZ) != cnt * PFS_SECTORSIZ)
+        return -1;
+    return 0;
 }
 
-static int32_t
-pfs_bwrite(int fd, int64_t bno, const void *buf, int32_t cnt)
+static int32_t pfs_bwrite(int fd, int64_t bno, const void *buf, int32_t cnt)
 {
 	if(cnt < 0 || buf == NULL)
-                return -1;
+        return -1;
 	if(bno < 0 || bno * PFS_SECTORSIZ < 0) 
 		return -1;
 	if(lseek64(fd, bno * PFS_SECTORSIZ, SEEK_SET) != bno * PFS_SECTORSIZ)
@@ -52,104 +49,99 @@ pfs_bwrite(int fd, int64_t bno, const void *buf, int32_t cnt)
 	return 0;
 }
 
-static int64_t
-pfs_get_size(int fd)
+static int64_t pfs_get_size(int fd)
 {
-        return lseek64(fd, 0, SEEK_END);
+    return lseek64(fd, 0, SEEK_END);
 }
 
-static int32_t
-pfs_type_check(const char *image)
+static int32_t pfs_type_check(const char *image)
 {
-        struct stat64 stbuf;
+    struct stat64 stbuf;
 
-        if(stat64(image, &stbuf) == -1) 
-                return -1;
-        if(!(S_ISREG(stbuf.st_mode) || S_ISBLK(stbuf.st_mode))) 
-                return -1;
-        return 0;
+    if(stat64(image, &stbuf) == -1) 
+        return -1;
+    if(!(S_ISREG(stbuf.st_mode) || S_ISBLK(stbuf.st_mode))) 
+        return -1;
+    return 0;
 }
 
-static int
-set_reservedsectors(int fd, int32_t rsiz, int64_t bno, struct pfs_super_block *sp)
+static int set_reservedsectors(int fd, int32_t rsiz, int64_t bno, struct pfs_super_block *sp)
 {
 	int8_t	vbr[PFS_SECTORSIZ];
 
 	if(pfs_bread(fd, bno, vbr, 1) == -1) 
-                return -1;
-        vbr[0] = 0xEB;  
-        vbr[1] = 0x02;  
-        vbr[2] = (int8_t)(rsiz & 0xFF); 
-        vbr[3] = (int8_t)((rsiz >> 8) & 0xFF);
-        if(pfs_bwrite(fd, bno, vbr, 1) == -1) 
-                return -1;
+        return -1;
+    vbr[0] = 0xEB;  
+    vbr[1] = 0x02;  
+    vbr[2] = (int8_t)(rsiz & 0xFF); 
+    vbr[3] = (int8_t)((rsiz >> 8) & 0xFF);
+    if(pfs_bwrite(fd, bno, vbr, 1) == -1) 
+        return -1;
 	memmove(sp, vbr, 4);
 	return 0;	
 }
 
-static int
-set_blocklist(int fd, int64_t bhead, int64_t end)
+static int set_blocklist(int fd, int64_t bhead, int64_t end)
 {
 	int	i, j;
-        int64_t	n, m, buf[PFS_INBLOCKS];
+    int64_t	n, m, buf[PFS_INBLOCKS];
 	
 	if(lseek64(fd, bhead * PFS_SECTORSIZ, SEEK_SET) != bhead * PFS_SECTORSIZ)
-                return -1;
+        return -1;
 	n = (end / PFS_BLOCKSIZ) + (end % PFS_BLOCKSIZ ? 1 : 0);
         m = bhead + n * PFS_STRS_PER_BLOCK + PFS_STRS_PER_BLOCK;
 	for(i = 0; i < n; i++){
 		buf[0] = (int64_t)htole64(bhead + PFS_STRS_PER_BLOCK);
-                if(m + PFS_STRS_PER_BLOCK * (PFS_INBLOCKS - 1) < end){
-                        for(j = PFS_INBLOCKS -1; j > 0; j--, m += PFS_STRS_PER_BLOCK)
+            if(m + PFS_STRS_PER_BLOCK * (PFS_INBLOCKS - 1) < end){
+                for(j = PFS_INBLOCKS -1; j > 0; j--, m += PFS_STRS_PER_BLOCK)
                                 buf[j] = (int64_t)htole64(m);
-                }else{
-                        for(j = 1; j < PFS_INBLOCKS && m < end; j++, m += PFS_STRS_PER_BLOCK)
-                                buf[j] = (int64_t)htole64(m);
-                        while(j < PFS_INBLOCKS)
-                                buf[j++] = 0;
+                }
+                else{
+                    for(j = 1; j < PFS_INBLOCKS && m < end; j++, m += PFS_STRS_PER_BLOCK)
+                        buf[j] = (int64_t)htole64(m);
+                    while(j < PFS_INBLOCKS)
+                        buf[j++] = 0;
                 }
 		bhead += PFS_STRS_PER_BLOCK;
 		if(pfs_bwrite_nolseek(fd, bhead, buf, PFS_STRS_PER_BLOCK) == -1)
 			return -1;
 	}
 	memset(buf, 0, sizeof(buf));
-        if(pfs_bwrite_nolseek(fd, bhead, buf, PFS_STRS_PER_BLOCK) == -1)
-                return -1;
-        return 0;
+    if(pfs_bwrite_nolseek(fd, bhead, buf, PFS_STRS_PER_BLOCK) == -1)
+        return -1;
+    return 0;
 }
 
-static int
-creat_root(int fd, int64_t ino, int64_t dno)
+static int creat_root(int fd, int64_t ino, int64_t dno)
 {
-        struct pfs_inode   root;
+    struct pfs_inode   root;
 	int64_t	buf[PFS_INBLOCKS];	
 	struct pfs_dir_entry	dbuf[2];
 
-        memset(&root, 0, sizeof(root));
-        root.i_addr[0] = (int64_t)htole64(dno); 
-        root.i_mode = (int32_t)htole32(040777); 
-        root.i_nlink = (int32_t)htole32(2); 
+    memset(&root, 0, sizeof(root));
+    root.i_addr[0] = (int64_t)htole64(dno); 
+    root.i_mode = (int32_t)htole32(040777); 
+    root.i_nlink = (int32_t)htole32(2); 
 	root.i_blocks = (int64_t)htole64(1); 
 	root.i_size = (int64_t)htole64(PFS_BLOCKSIZ); 
-        root.i_atime = root.i_mtime = root.i_ctime = (int64_t)htole64((int64_t)time(NULL));
-        dbuf[0].d_len = 1; 
-        dbuf[1].d_len = 2; 
+    root.i_atime = root.i_mtime = root.i_ctime = (int64_t)htole64((int64_t)time(NULL));
+    dbuf[0].d_len = 1; 
+    dbuf[1].d_len = 2; 
 	dbuf[0].d_next = dbuf[1].d_next = 0; 
 	dbuf[0].d_reclen = dbuf[1].d_reclen = (int16_t)htole16(sizeof(dbuf[0])); 
-        dbuf[0].d_ino = dbuf[1].d_ino = (int64_t)htole64(ino); 
-        memmove(dbuf[0].d_name, ".", 2);
-        memmove(dbuf[1].d_name, "..", 3);
+    dbuf[0].d_ino = dbuf[1].d_ino = (int64_t)htole64(ino); 
+    memmove(dbuf[0].d_name, ".", 2);
+    memmove(dbuf[1].d_name, "..", 3);
 	memset(buf, 0, PFS_BLOCKSIZ);
 	memmove(buf + PFS_DIRHASH_UNUSED + 1, dbuf, sizeof(dbuf));
 	if(pfs_bwrite(fd, dno, buf, PFS_STRS_PER_BLOCK) == -1) 
 		return -1;
 	if(pfs_bwrite(fd, ino, &root, 1) == -1) 
 		return -1;
-        return 0;
+    return 0;
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int i, fd;
 	int32_t	rsiz;
@@ -242,11 +234,11 @@ main(int argc, char *argv[])
 		return -1;
 	}
 	memset(buf, 0, sizeof(buf));
-        if(pfs_bwrite(fd, root + 2, buf, 1) == -1){ /* clear */
-                close(fd);
-                printf("mkfs: failed to init inode map\n");
-                return -1;
-        }
+    if(pfs_bwrite(fd, root + 2, buf, 1) == -1){ /* clear */
+        close(fd);
+        printf("mkfs: failed to init inode map\n");
+        return -1;
+    }
 	if(set_blocklist(fd, root + 2 * PFS_STRS_PER_BLOCK, end) == -1){ 
 		close(fd);
 		printf("mkfs: failed to init block map\n");

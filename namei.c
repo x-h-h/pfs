@@ -7,8 +7,7 @@
 extern const struct inode_operations simple_symlink_inode_operations;
 #endif
 
-static inline int
-pfs_add_nondir(struct dentry *dentry, struct inode *inode)
+static inline int pfs_add_nondir(struct dentry *dentry, struct inode *inode)
 {
 	int	err;
 
@@ -23,8 +22,7 @@ pfs_add_nondir(struct dentry *dentry, struct inode *inode)
 	return err;
 }
 
-static struct dentry *
-pfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+static struct dentry * pfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
 {
 	int64_t	ino;
 	struct inode *inode;
@@ -40,8 +38,7 @@ pfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
 	return d_splice_alias(inode, dentry);
 }
 
-static int
-pfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
+static int pfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
 {
 	struct inode *inode;
 
@@ -54,14 +51,12 @@ pfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
 	return PTR_ERR(inode);
 }
 
-static int
-pfs_create(struct inode *dir, struct dentry *dentry, umode_t mode, bool execl)
+static int pfs_create(struct inode *dir, struct dentry *dentry, umode_t mode, bool execl)
 {
 	return pfs_mknod(dir, dentry, mode, 0);
 }
 
-static int
-pfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+static int pfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
 {
 	struct inode *inode;	
 
@@ -76,8 +71,7 @@ pfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
 	return PTR_ERR(inode);
 }
 
-static int
-pfs_symlink(struct inode *dir, struct dentry *dentry, const char *symname)
+static int pfs_symlink(struct inode *dir, struct dentry *dentry, const char *symname)
 {
 	struct inode *inode;
 	int	len = strlen(symname) + 1;
@@ -99,7 +93,8 @@ pfs_symlink(struct inode *dir, struct dentry *dentry, const char *symname)
 				iput(inode);
 				return err;
 			}	
-		}else{ 
+		}
+		else{ 
 			inode->i_op = &simple_symlink_inode_operations;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
 			inode->i_link = (char *)PFS_I(inode)->i_addr;
@@ -115,8 +110,7 @@ pfs_symlink(struct inode *dir, struct dentry *dentry, const char *symname)
 	return PTR_ERR(inode);
 }
 
-static int
-pfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
+static int pfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
 {
 	int	err;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
@@ -136,8 +130,7 @@ pfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
 	return err;
 }
 
-static int
-pfs_unlink(struct inode *dir, struct dentry *dentry)
+static int pfs_unlink(struct inode *dir, struct dentry *dentry)
 {
 	int	err;
 	int64_t	dno;
@@ -152,11 +145,11 @@ pfs_unlink(struct inode *dir, struct dentry *dentry)
 #endif
 	err = -ENOENT;
 	if(!(dno = pfs_get_block_number(dir, 0, 0))) 
-                return -EIO;
-        if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
-                return -EIO;
-        pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, bh); 
-        if(!(de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1))) 
+        return -EIO;
+    if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
+        return -EIO;
+    pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, bh); 
+    if(!(de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1))) 
 		goto out;
 	if((err = pfs_delete_entry(dir, de, bh, &hd, &hd1)))
 		goto out;
@@ -164,15 +157,14 @@ pfs_unlink(struct inode *dir, struct dentry *dentry)
 	inode_dec_link_count(inode); 
 out:
 	if(hd.bh)
-                brelse(hd.bh);
-        if(hd1.bh)
-                brelse(hd1.bh);
-        brelse(bh);
-        return err;
+        brelse(hd.bh);
+    if(hd1.bh)
+        brelse(hd1.bh);
+    brelse(bh);
+    return err;
 }
 
-static int
-pfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+static int pfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 {
 	int err;
 	struct inode *inode;
@@ -200,8 +192,7 @@ out_dir:
 	return err;
 }
 
-static int
-pfs_rmdir(struct inode *dir, struct dentry *dentry)
+static int pfs_rmdir(struct inode *dir, struct dentry *dentry)
 {
 	int 	err = -ENOTEMPTY;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
@@ -220,8 +211,7 @@ pfs_rmdir(struct inode *dir, struct dentry *dentry)
 	return err;
 }
 
-static int
-pfs_rename(struct inode *old_dir, struct dentry *old_dentry,  struct inode *new_dir, struct dentry *new_dentry)
+static int pfs_rename(struct inode *old_dir, struct dentry *old_dentry,  struct inode *new_dir, struct dentry *new_dentry)
 {
 	int	err;
 	int64_t	dno;
@@ -247,24 +237,24 @@ pfs_rename(struct inode *old_dir, struct dentry *old_dentry,  struct inode *new_
 	
 	err = -EIO;
 	dir_bh = old_bh = new_bh = old_hd.bh = old_hd1.bh = new_hd.bh = new_hd1.bh = NULL;
-        if(!(dno = pfs_get_block_number(old_dir, 0, 0))) 
+    if(!(dno = pfs_get_block_number(old_dir, 0, 0))) 
 		goto out;
-        if(!(old_bh = sb_bread(old_dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
+    if(!(old_bh = sb_bread(old_dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
 		goto out;
 	err = -ENOENT;
 	qstr = &old_dentry->d_name;
-        pfs_add_hdentry(&old_hd, (int64_t *)((char *)old_bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, old_bh);
-        if(!(old_de = pfs_find_entry(old_dir, qstr, pfs_match, &old_hd, &old_hd1))) 
-                goto out;
+    pfs_add_hdentry(&old_hd, (int64_t *)((char *)old_bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, old_bh);
+    if(!(old_de = pfs_find_entry(old_dir, qstr, pfs_match, &old_hd, &old_hd1))) 
+        goto out;
 	if(S_ISDIR(old_inode->i_mode)){
-                err = - EIO;
-                if(!(dno = pfs_get_block_number(old_inode, 0, 0)))
-                        goto out;
-                if(!(dir_bh = sb_bread(old_inode->i_sb, dno / PFS_STRS_PER_BLOCK)))
-                        goto out;
-                dir_de = (struct pfs_dir_entry *)((char *)dir_bh->b_data +
-                        PFS_DIRHASH_UNUSED * sizeof(int64_t) + sizeof(int64_t) + sizeof(*dir_de));
-        }
+        err = - EIO;
+        if(!(dno = pfs_get_block_number(old_inode, 0, 0)))
+            goto out;
+        if(!(dir_bh = sb_bread(old_inode->i_sb, dno / PFS_STRS_PER_BLOCK)))
+            goto out;
+        dir_de = (struct pfs_dir_entry *)((char *)dir_bh->b_data +
+                PFS_DIRHASH_UNUSED * sizeof(int64_t) + sizeof(int64_t) + sizeof(*dir_de));
+    }
 	if(new_inode){
 		err = -ENOTEMPTY;
 		if(dir_de && !pfs_empty_dir(new_inode)) 
@@ -322,14 +312,14 @@ out:
 }
 
 const struct inode_operations pfs_dir_inode_operations = {
-        .create         = pfs_create,
-        .lookup         = pfs_lookup,
-        .link           = pfs_link,
-        .unlink         = pfs_unlink,
+    .create     = pfs_create,
+    .lookup     = pfs_lookup,
+    .link       = pfs_link,
+    .unlink     = pfs_unlink,
 	.symlink	= pfs_symlink,
 	.mkdir		= pfs_mkdir,
 	.rmdir		= pfs_rmdir,
 	.mknod 		= pfs_mknod,
-        .rename         = pfs_rename,
+    .rename     = pfs_rename,
 	.tmpfile	= pfs_tmpfile,
 };
