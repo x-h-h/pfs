@@ -73,7 +73,8 @@ struct pfs_dir_entry * pfs_find_entry(struct inode *dir, const struct qstr *qstr
 				goto out;
 			if(!(bh = sb_bread(sb, dno / PFS_STRS_PER_BLOCK))) 
 				goto out;
-		}else{ 
+		}
+		else{ 
 			bh = hdp1->bh;
 			get_bh(bh); 
 		}
@@ -152,8 +153,7 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 		return 0;
 	if(!(bh = sb_bread(dir->i_sb, ino / PFS_STRS_PER_BLOCK))) 
 		return 0;
-	ino = 0;
-	printk("qstr=%s\n",qstr->name); 
+	ino = 0; 
 	if(strcmp(qstr->name, "..") == 0){ 
 		de = (struct pfs_dir_entry *)((char *)bh->b_data +  
 			PFS_DIRHASH_UNUSED * sizeof(int64_t) + sizeof(int64_t) + sizeof(*de)); 
@@ -162,12 +162,21 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 		return ino;
 	}
 	pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, bh); 
-	if((de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1))) 
+	if((de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1)))
+	{
 		ino = le64_to_cpu(de->d_ino);
+		printk("de=find_entry");
+	}
 	if(hd.bh)
+	{
+		printk("hd");
 		brelse(hd.bh);
+	}
 	if(hd1.bh)
+	{
+		printk("hd1");
 		brelse(hd1.bh);
+	}
 	brelse(bh);
 	return ino;
 }
