@@ -9,6 +9,9 @@
 #include	<linux/buffer_head.h>
 #include	"pfs.h"
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("颜文泽");
+MODULE_VERSION("1.0");
 
 static struct kmem_cache *pfs_inode_cachep;
 
@@ -209,7 +212,7 @@ out:
 
 static struct dentry * pfs_mount(struct file_system_type *fs_type, int flags, const char *dev_name, void *data)
 {
-        return mount_bdev(fs_type, flags, dev_name, data, pfs_fill_super); 
+    return mount_bdev(fs_type, flags, dev_name, data, pfs_fill_super); 
 }
 
 
