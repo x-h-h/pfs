@@ -152,7 +152,8 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 		return 0;
 	if(!(bh = sb_bread(dir->i_sb, ino / PFS_STRS_PER_BLOCK))) 
 		return 0;
-	ino = 0; 
+	ino = 0;
+	printk("qstr=%s\n",qstr->name); 
 	if(strcmp(qstr->name, "..") == 0){ 
 		de = (struct pfs_dir_entry *)((char *)bh->b_data +  
 			PFS_DIRHASH_UNUSED * sizeof(int64_t) + sizeof(int64_t) + sizeof(*de)); 
