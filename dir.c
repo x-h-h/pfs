@@ -20,7 +20,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 	if(ctx->pos == 0) 
 		ctx->pos = PFS_DIRHASHSIZ * sizeof(int64_t) + sizeof(int64_t);
 	for(off = ctx->pos & (PFS_BLOCKSIZ - 1); ctx->pos < inode->i_size; off = ctx->pos & (PFS_BLOCKSIZ - 1)){
-		printk("off=%d\n",off);
+		//printk("off=%d\n",off);
 		if(!(dno = pfs_get_block_number(inode, pfs_block_number(ctx->pos), 0))) 
 			goto skip;	
 		if(!(bh = sb_bread(inode->i_sb, dno / PFS_STRS_PER_BLOCK))){ 
@@ -39,7 +39,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 			}
 			//printk("do while");
 			off += pfs_get_de_size(de);
-			printk("off2=%d\n",off);
+			//printk("off2=%d\n",off);
 			ctx->pos += pfs_get_de_size(de);
 		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
 		brelse(bh);
@@ -165,16 +165,16 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 	if((de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1)))
 	{
 		ino = le64_to_cpu(de->d_ino);
-		printk("de=find_entry");
+		//printk("de=find_entry");
 	}
 	if(hd.bh)
 	{
-		printk("hd");
+		//printk("hd");
 		brelse(hd.bh);
 	}
 	if(hd1.bh)
 	{
-		printk("hd1");
+		//printk("hd1");
 		brelse(hd1.bh);
 	}
 	brelse(bh);
