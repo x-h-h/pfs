@@ -20,6 +20,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 	if(ctx->pos == 0) 
 		ctx->pos = PFS_DIRHASHSIZ * sizeof(int64_t) + sizeof(int64_t);
 	for(off = ctx->pos & (PFS_BLOCKSIZ - 1); ctx->pos < inode->i_size; off = ctx->pos & (PFS_BLOCKSIZ - 1)){
+		printk("off=%d\n",off)
 		if(!(dno = pfs_get_block_number(inode, pfs_block_number(ctx->pos), 0))) 
 			goto skip;	
 		if(!(bh = sb_bread(inode->i_sb, dno / PFS_STRS_PER_BLOCK))){ 
@@ -29,7 +30,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 		}
 		do{
 			de = (struct pfs_dir_entry *)((char *)bh->b_data + off);
-			//printk( "%s\n",pfs_get_de_name(de));
+			printk( "%s\n",pfs_get_de_name(de));
 			if(de->d_ino){ 
 				if(!(dir_emit(ctx, pfs_get_de_name(de), de->d_len, (int32_t)le64_to_cpu(de->d_ino), DT_UNKNOWN))){
 					brelse(bh);
