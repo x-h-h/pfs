@@ -30,7 +30,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 		}
 		do{
 			de = (struct pfs_dir_entry *)((char *)bh->b_data + off);
-			printk( "%s\n",pfs_get_de_name(de));
+			//printk( "%s\n",pfs_get_de_name(de));
 			if(de->d_ino){ 
 				if(!(dir_emit(ctx, pfs_get_de_name(de), de->d_len, (int32_t)le64_to_cpu(de->d_ino), DT_UNKNOWN))){
 					brelse(bh);
@@ -79,6 +79,7 @@ struct pfs_dir_entry * pfs_find_entry(struct inode *dir, const struct qstr *qstr
 			get_bh(bh); 
 		}
 		de = (struct pfs_dir_entry *)((char *)bh->b_data + off % PFS_BLOCKSIZ);
+		printk( "%s\n",pfs_get_de_name(de));
 		pfs_add_hdentry(hdp, &de->d_next, off, bh);
 		if(test(qstr, de))
 			break;
