@@ -37,7 +37,8 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 					return 0;
 				}
 			}
-			//printk("do while");
+			printk("name=%s\n",pfs_get_de_name(de));
+			printk("size=%d\n",pfs_get_de_size(de))
 			off += pfs_get_de_size(de);
 			printk("off2=%d\n",off);
 			ctx->pos += pfs_get_de_size(de);
@@ -79,12 +80,12 @@ struct pfs_dir_entry * pfs_find_entry(struct inode *dir, const struct qstr *qstr
 			get_bh(bh); 
 		}
 		de = (struct pfs_dir_entry *)((char *)bh->b_data + off % PFS_BLOCKSIZ);
-		printk( "%s\n",pfs_get_de_name(de));
+		//printk( "%s\n",pfs_get_de_name(de));
 		pfs_add_hdentry(hdp, &de->d_next, off, bh);
 		if(test(qstr, de))
 			break;
 	}
-	printk("pfs_find_entry\n");
+	//printk("pfs_find_entry\n");
 	if(!off)
 		return NULL;
 	return de;
@@ -205,7 +206,7 @@ int pfs_add_link(struct dentry *dentry, struct inode *inode)
     if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
         return err;
 	hashval = pfs_hash(qstr->name); 
-	printk("pfs_add_link");
+	//printk("pfs_add_link");
     pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + PFS_DIRHASH_UNUSED * sizeof(int64_t)), 0, bh); 
     if((de = pfs_find_entry(dir, qstr, pfs_find_empty_entry, &hd, &hd1))){ 
 		*(hd1.p) = *(hd.p); 
