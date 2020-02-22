@@ -89,7 +89,7 @@ static inline int pfs_hash(const char *str)
 		return 0;
 	for(hash = 0; *str; str++)
 		//hash = *str + (hash << 6) + (hash << 16) - hash;
-		hash = *str + 10086 - hash;
+		hash += 1 
 	return hash % PFS_DIRHASHSIZ;
 }
 
