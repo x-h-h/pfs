@@ -30,6 +30,7 @@ static struct dentry * pfs_lookup(struct inode *dir, struct dentry *dentry, unsi
 	if(dentry->d_name.len > PFS_MAXNAMLEN)
 		return ERR_PTR(-ENAMETOOLONG);
 	inode = NULL;
+	printk("%s\n",&dentry->d_lru);
 	if((ino = pfs_inode_by_name(dir, &dentry->d_name)) > 0){
 		inode = pfs_iget(dir->i_sb, ino);
 		if(IS_ERR(inode))
