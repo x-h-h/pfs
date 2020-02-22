@@ -20,7 +20,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 	if(ctx->pos == 0) 
 		ctx->pos = PFS_DIRHASHSIZ * sizeof(int64_t) + sizeof(int64_t);
 	for(off = ctx->pos & (PFS_BLOCKSIZ - 1); ctx->pos < inode->i_size; off = ctx->pos & (PFS_BLOCKSIZ - 1)){
-		printk("off=%d\n",off);
+		//printk("off=%d\n",off);
 		if(!(dno = pfs_get_block_number(inode, pfs_block_number(ctx->pos), 0))) 
 			goto skip;	
 		if(!(bh = sb_bread(inode->i_sb, dno / PFS_STRS_PER_BLOCK))){ 
@@ -37,18 +37,17 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 					return 0;
 				}
 			}
-			printk("name=%s\n",pfs_get_de_name(de));
-			printk("size=%d\n",pfs_get_de_size(de));
+			//printk("name=%s\n",pfs_get_de_name(de));
+			//printk("size=%d\n",pfs_get_de_size(de));
 			off += pfs_get_de_size(de);
-			printk("off2=%d\n",off);
+			//printk("off2=%d\n",off);
 			ctx->pos += pfs_get_de_size(de);
-			printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
-			printk(KERN_INFO "inode->i_size is %llu\n", inode->i_size);
+			//printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
+			//printk(KERN_INFO "inode->i_size is %llu\n", inode->i_size);
 		}while(off < PFS_BLOCKSIZ && ctx->pos < inode->i_size);
 		brelse(bh);
 		continue;
 		skip:
-		//printk("skip");
 		ctx->pos += PFS_BLOCKSIZ - off; 
 	}
 	//printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
@@ -166,6 +165,7 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 		return ino;
 	}
 	pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, bh); 
+	printk(KERN_INFO "by_name\n");
 	if((de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1)))
 	{
 		ino = le64_to_cpu(de->d_ino);
@@ -211,6 +211,7 @@ int pfs_add_link(struct dentry *dentry, struct inode *inode)
 	//printk("pfs_add_link");
     pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + PFS_DIRHASH_UNUSED * sizeof(int64_t)), 0, bh); 
     if((de = pfs_find_entry(dir, qstr, pfs_find_empty_entry, &hd, &hd1))){ 
+    	printk(KERN_INFO "add_link");
 		*(hd1.p) = *(hd.p); 
 		mark_buffer_dirty_inode(hd1.bh, dir);
 		*(hd.p) = ((int64_t *)bh->b_data)[hashval]; 
