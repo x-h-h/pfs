@@ -38,7 +38,7 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 				}
 			}
 			printk("name=%s\n",pfs_get_de_name(de));
-			printk("size=%d\n",pfs_get_de_size(de))
+			printk("size=%d\n",pfs_get_de_size(de));
 			off += pfs_get_de_size(de);
 			printk("off2=%d\n",off);
 			ctx->pos += pfs_get_de_size(de);
