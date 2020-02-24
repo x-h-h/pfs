@@ -236,7 +236,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	if(!(dno = pfs_bmap_alloc(inode, offset, depth)))
 		return -EIO;
 out:
-	map_bh(bh, inode->i_sb, dno / PFS_STRS_PER_BLOCK);
+	printk("%lld\n",map_bh(bh, inode->i_sb, dno / PFS_STRS_PER_BLOCK));
 	return 0;
 }
 

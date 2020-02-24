@@ -158,16 +158,15 @@ static int pfs_unlink(struct inode *dir, struct dentry *dentry)
         return -EIO;
     pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + pfs_hash(qstr->name) * sizeof(int64_t)), 0, bh); 
     if(!(de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1))) {
-    	printk("de\n");
 		goto out;
     }
 	if((err = pfs_delete_entry(dir, de, bh, &hd, &hd1))){
-		printk("err\n");
 		goto out;
 	}
 	inode->i_ctime = dir->i_ctime;
 	inode_dec_link_count(inode);
-	printk("no out\n"); 
+	//hash_map_delete(inode);
+	//printk("no out\n"); 
 out:
 	if(hd.bh)
         brelse(hd.bh);
