@@ -232,7 +232,7 @@ static int pfs_rename(struct inode *old_dir, struct dentry *old_dentry,  struct 
 	struct pfs_dir_entry *dir_de = NULL;
 	struct pfs_dir_hash_info old_hd, old_hd1;
 	struct pfs_dir_hash_info new_hd, new_hd1;
-	printk("rename\n");
+	//printk("rename\n");
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
         struct inode *old_inode = d_inode(old_dentry);
 #else
