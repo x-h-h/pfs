@@ -220,9 +220,17 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
+	/*
+	if(dno = hash_map_search(inode)){
+		goto out;
+	}
+	else{}
+	*/
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth)))
+
 			return -EIO;
+		//hash_map_add(inode, dno);
 		goto out;
 	}
 	if(!(dno = pfs_bmap_alloc(inode, offset, depth)))
