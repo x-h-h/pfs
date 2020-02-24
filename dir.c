@@ -50,7 +50,8 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 		skip:
 		ctx->pos += PFS_BLOCKSIZ - off; 
 	}
-	//printk(KERN_INFO "ctx->pos is %llu\n", ctx->pos);
+	printk(KERN_INFO "test=%lld\n", test);
+	printk(KERN_INFO "ctx->pos is %lld\n", pfs_block_number(ctx->pos));
 	return 0;
 }
 
@@ -169,16 +170,13 @@ int64_t pfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
 	if((de = pfs_find_entry(dir, qstr, pfs_match, &hd, &hd1)))
 	{
 		ino = le64_to_cpu(de->d_ino);
-		//printk("de=find_entry");
 	}
 	if(hd.bh)
 	{
-		//printk("hd");
 		brelse(hd.bh);
 	}
 	if(hd1.bh)
 	{
-		//printk("hd1");
 		brelse(hd1.bh);
 	}
 	brelse(bh);

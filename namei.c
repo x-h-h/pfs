@@ -26,11 +26,17 @@ static struct dentry * pfs_lookup(struct inode *dir, struct dentry *dentry, unsi
 {
 	int64_t	ino;
 	struct inode *inode;
+	/*
+	这里增加一个位图搜索bit_map_search(struct inode *dir, struct dentry *dentry)
+	bit_map结构包含dir,dentry,inode
+	若bit_map_search返回空，执行pfs_iget,将目标dir,dentry,inode替换当前指针下的内容
+	指针前移一位,到末尾回到位图首
+	*/
 
 	if(dentry->d_name.len > PFS_MAXNAMLEN)
 		return ERR_PTR(-ENAMETOOLONG);
 	inode = NULL;
-	printk("%s\n",&dentry->d_lru);
+	//printk("%s\n",&dentry->d_lru);
 	if((ino = pfs_inode_by_name(dir, &dentry->d_name)) > 0){
 		inode = pfs_iget(dir->i_sb, ino);
 		if(IS_ERR(inode))

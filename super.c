@@ -133,6 +133,7 @@ static int pfs_fill_super(struct super_block *s, void *data, int silent)
 	struct inode	*rootp;
 	struct buffer_head	*bh;
 	struct pfs_sb_info	*sbi;
+	test = 1;
 
 	if(!(sbi = kzalloc(sizeof(*sbi), GFP_KERNEL))){ 
 		pr_warn("pfs: device %s: %s: out of memory\n", s->s_id, "pfs_fill_super");	
