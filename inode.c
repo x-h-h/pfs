@@ -342,6 +342,7 @@ int64_t pfs_get_block_number(struct inode *inode, sector_t block, int create)
 {
 	int	depth;
     int64_t offset[PFS_DEPTH];
+    printk("get_block\n" );
 
     if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return 0;

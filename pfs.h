@@ -7,7 +7,6 @@
 #define PFS_ALLOC_INODE	0	
 #define PFS_ALLOC_BLOCK	1	
 
-int64_t	test;
 
 struct pfs_sb_info{
 	int64_t	*s_ifree; 	

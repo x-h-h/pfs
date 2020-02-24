@@ -50,7 +50,6 @@ static int pfs_readdir(struct file *file, struct dir_context *ctx)
 		skip:
 		ctx->pos += PFS_BLOCKSIZ - off; 
 	}
-	printk(KERN_INFO "test=%lld\n", test);
 	printk(KERN_INFO "ctx->pos is %lld\n", pfs_block_number(ctx->pos));
 	return 0;
 }
