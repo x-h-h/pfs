@@ -130,6 +130,7 @@ int pfs_empty_dir(struct inode *dir)
 	int	i;
 	int64_t	dno;
 	struct buffer_head *bh;
+	printk("emptydir\n");
 
 	if(!(dno = pfs_get_block_number(dir, 0, 0))) 
         return 0;
@@ -205,10 +206,10 @@ int pfs_add_link(struct dentry *dentry, struct inode *inode)
     if(!(bh = sb_bread(dir->i_sb, dno / PFS_STRS_PER_BLOCK))) 
         return err;
 	hashval = pfs_hash(qstr->name); 
-	//printk("pfs_add_link");
+	printk("pfs_add_link");
     pfs_add_hdentry(&hd, (int64_t *)((char *)bh->b_data + PFS_DIRHASH_UNUSED * sizeof(int64_t)), 0, bh); 
     if((de = pfs_find_entry(dir, qstr, pfs_find_empty_entry, &hd, &hd1))){ 
-    	printk(KERN_INFO "add_link");
+    	//printk(KERN_INFO "add_link");
 		*(hd1.p) = *(hd.p); 
 		mark_buffer_dirty_inode(hd1.bh, dir);
 		*(hd.p) = ((int64_t *)bh->b_data)[hashval]; 
