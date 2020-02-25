@@ -287,7 +287,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     initHashTable(&t);
     findValueByKey(t,inode);
     */
-    printk("%lld\n",inode->i_uid);
+
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
@@ -302,6 +302,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 
 			return -EIO;
 		//hash_map_add(inode, dno);
+		printk("%lld\n",dno);
 		goto out;
 	}
 	if(!(dno = pfs_bmap_alloc(inode, offset, depth)))
