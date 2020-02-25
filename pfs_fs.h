@@ -88,8 +88,8 @@ static inline int pfs_hash(const char *str)
 	if(!str) 
 		return 0;
 	for(hash = 0; *str; str++)
-		//hash = *str + (hash << 6) + (hash << 16) - hash;
-		hash += 1; 
+		hash = *str + (hash << 6) + (hash << 16) - hash;
+		//hash += 1; 
 	return hash % PFS_DIRHASHSIZ;
 }
 
