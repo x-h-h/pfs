@@ -12,6 +12,68 @@ typedef struct{
 	struct buffer_head *bh;
 }Indirect;
 
+/*hash_test*/
+struct hashEntry
+{
+    struct inode * key;
+    struct buffer_head * bh;
+    struct hashEntry* next;
+};
+
+typedef struct hashEntry entry;
+
+struct hashTable
+{
+    entry bucket[1024];  //先默认定义16个桶
+};
+ 
+typedef struct hashTable table;
+
+static void initHashTable(table * t)
+{
+	t = (unsigned char*)kmalloc(1024, 0);
+    int i;
+    if (t == NULL)return;
+
+    for (i = 0; i < BUCKETCOUNT; ++i) {
+        t->bucket[i].key = NULL;
+        t->bucket[i].bh = NULL;
+        t->bucket[i].next = NULL;
+    }
+}
+
+static inline int keyToIndex(const struct inode * key)
+{
+	uint32_t	hash;
+
+	if(!key->i_uid) 
+		return 0;
+	for(hash = 0; *key; key++)
+		hash = *key->i_uid + (hash << 6) + (hash << 16) - hash;
+		//hash += 1; 
+	return hash % 1024;
+}
+
+static struct buffer_head * findValueByKey(const table* t , const struct inode * key)
+{
+    int index;
+    const entry* e;
+    if (t == NULL || key == NULL) {
+        return NULL;
+    }
+    index = keyToIndex(key);
+    e = &(t->bucket[index]);
+    if (e->key == NULL) return NULL;//这个桶还没有元素
+    while (e != NULL) {
+        if (key == e->key) {
+            return e->bh;    //找到了，返回值
+        }
+        e = e->next;
+    }
+    return NULL;
+}
+//end_test
+
 static inline int pfs_depth(int x)
 {
 	if(x < (int)PFS_D_BLOCK) 
@@ -217,6 +279,9 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int	depth;
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
+	table t;
+    initHashTable(&t);
+    findValueByKey(t,inode);
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
@@ -239,6 +304,7 @@ out:
 	//map_bh(bh, inode->i_sb, dno / PFS_STRS_PER_BLOCK);
 	bh->b_bdev = inode->i_sb->s_bdev;
 	bh->b_blocknr = dno / PFS_STRS_PER_BLOCK;
+	bh->b_size = inode->i_sb->s_blocksize;
 	set_buffer_mapped(bh);
 	return 0;
 }
