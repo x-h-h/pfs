@@ -34,15 +34,19 @@ typedef struct hashTable table;
 
 static void initHashTable(table * t)
 {
-	t = (unsigned char*)kmalloc(1024, 0);
+	struct page *page;
+	void *address;
+	page = alloc_pages(GFP_KERNEL, 0);
+	address = page_address(page);
     int i;
     if (t == NULL)return;
 
-    for (i = 0; i < 1024; ++i) {
+    for (i = 0; i < 100; ++i) {
         t->bucket[i].key = NULL;
         t->bucket[i].bh = NULL;
         t->bucket[i].next = NULL;
     }
+    memcpy(address, t, strlen(t));
 }
 
 static inline int keyToIndex(int key)
