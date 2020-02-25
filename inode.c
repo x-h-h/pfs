@@ -13,6 +13,7 @@ typedef struct{
 }Indirect;
 
 /*hash_test*/
+/*
 struct hashEntry
 {
     struct inode * key;
@@ -73,6 +74,7 @@ static struct buffer_head * findValueByKey(table* t , struct inode * key)
     }
     return NULL;
 }
+*/
 //end_test
 
 static inline int pfs_depth(int x)
@@ -280,9 +282,12 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int	depth;
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
+	/*
 	table t;
     initHashTable(&t);
     findValueByKey(t,inode);
+    */
+    printk("%lld\n",inode->i_uid);
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
