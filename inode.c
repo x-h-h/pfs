@@ -285,7 +285,8 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	
 	table t;
     initHashTable(&t);
-    findValueByKey(t,inode->ino);
+    print("%d\n",t->bucket[i].key);
+    //findValueByKey(t,inode->ino);
     
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
