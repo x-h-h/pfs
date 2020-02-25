@@ -35,26 +35,27 @@ static void initHashTable(table * t)
     int i;
     if (t == NULL)return;
 
-    for (i = 0; i < BUCKETCOUNT; ++i) {
+    for (i = 0; i < 1024; ++i) {
         t->bucket[i].key = NULL;
         t->bucket[i].bh = NULL;
         t->bucket[i].next = NULL;
     }
 }
 
-static inline int keyToIndex(const struct inode * key)
+static inline int keyToIndex(struct inode * key)
 {
 	uint32_t	hash;
 
-	if(!key->i_uid) 
+	if(key->i_uid == NULL) 
 		return 0;
-	for(hash = 0; *key; key++)
-		hash = *key->i_uid + (hash << 6) + (hash << 16) - hash;
+	//for(hash = 0; strlen(key); key++)
+	//	hash = key->i_uid + (hash << 6) + (hash << 16) - hash;
 		//hash += 1; 
+	hash = key->i_uid % 13;
 	return hash % 1024;
 }
 
-static struct buffer_head * findValueByKey(const table* t , const struct inode * key)
+static struct buffer_head * findValueByKey(table* t , struct inode * key)
 {
     int index;
     const entry* e;
