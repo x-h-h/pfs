@@ -299,7 +299,7 @@ static int __init init_pfs_fs(void)
 	table *t;
 	//int data[] = {1,2,3};
 	//char data[] = "hello linux";
-	for (i = 0; i < 10; ++i) {
+	for (int i = 0; i < 10; ++i) {
         t->bucket[i].key = NULL;
     }
 	address = page_address(page);
