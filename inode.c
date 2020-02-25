@@ -285,7 +285,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	
 	table *t;
     initHashTable(t);
-    printk("%d\n",t->bucket[i].key);
+    printk("%d\n",t->bucket[1023].key);
     //findValueByKey(t,inode->ino);
     
 
