@@ -13,72 +13,6 @@ typedef struct{
 	struct buffer_head *bh;
 }Indirect;
 
-/*hash_test*/
-
-struct hashEntry
-{
-    //struct inode * key;
-    int key;
-    struct buffer_head * bh;
-    struct hashEntry* next;
-};
-
-typedef struct hashEntry entry;
-
-struct hashTable
-{
-    entry bucket[10];  //先默认定义16个桶
-};
- 
-typedef struct hashTable table;
-
-static void initHashTable(table * t)
-{
-	struct page *page;
-	void *address;
-	page = alloc_pages(GFP_KERNEL, 0);
-	address = page_address(page);
-    int i;
-    if (t == NULL)return;
-
-    for (i = 0; i < 10; ++i) {
-        t->bucket[i].key = NULL;
-        t->bucket[i].bh = NULL;
-        t->bucket[i].next = NULL;
-    }
-    memcpy(address, t, strlen(t));
-}
-
-static inline int keyToIndex(int key)
-{
-	uint32_t	hash;
-
-	if(key == NULL) 
-		return 0;
-	//for(hash = 0; strlen(key); key++)
-	//	hash = key->i_uid + (hash << 6) + (hash << 16) - hash;
-		//hash += 1; 
-	hash = key % 13;
-	return hash % 1024;
-}
-
-static struct buffer_head * findValueByKey(table* t , int key){
-    int index;
-    const entry* e;
-    if (t == NULL || key == NULL) {
-        return NULL;
-    }
-    index = keyToIndex(key);
-    e = &(t->bucket[index]);
-    if (e->key == NULL) return NULL;//这个桶还没有元素
-    while (e != NULL) {
-        if (key == e->key) {
-            return e->bh;    //找到了，返回值
-        }
-        e = e->next;
-    }
-    return NULL;
-}
 
 //end_test
 
@@ -288,9 +222,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
 	
-	table *t;
-    initHashTable(t);
-    printk("%d\n",t->bucket[1].key);
+	
     //findValueByKey(t,inode->ino);
     
 
