@@ -33,9 +33,9 @@ static void initHashTable(table * t, int size, void * address)
     if (t == NULL)return;
 
     for (i = 0; i < size; ++i) {
-        t[i]->key = NULL;
+        t[i].key = NULL;
         //t[i]->bh = NULL;
-        t[i]->next = NULL;
+        t[i].next = NULL;
     }
     memcpy(address, t, strlen(t));
 }
