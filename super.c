@@ -19,14 +19,14 @@ struct hashEntry
     //struct inode * key;
     int key;
     //struct buffer_head * bh;
-    //struct hashEntry* next;
+    struct hashEntry* next;
 };
 
-typedef struct hashEntry entry;
+//typedef struct hashEntry entry;
 
 struct hashTable
 {
-    entry bucket[10];  //先默认定义16个桶
+    struct hashEntry bucket[10];  //先默认定义16个桶
 };
  
 typedef struct hashTable table;
@@ -296,15 +296,19 @@ static int __init init_pfs_fs(void)
     struct page *page;
 	void *address;
 	page = alloc_pages(GFP_KERNEL, 0);
-	//table *t;
-	int data[];
+	table t[10];
+	//int data[];
 	//char data[] = "hello linux";
 	int i;
+	int j;
 	for (i = 0; i < 10; ++i) {
-        data[i] = i;
+        for(j = 0; j < 10; ++j)
+        {
+        	table[i]->bucket[j].key = i;
+        }
     }
 	address = page_address(page);
-	memcpy(address, data, strlen(data));
+	memcpy(address, t, strlen(t));
 	printk(KERN_ALERT "%s\n", (char *)address);
     //printk("%d\n",t->bucket[1].key);
 	int	err;
