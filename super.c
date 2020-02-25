@@ -296,11 +296,14 @@ static int __init init_pfs_fs(void)
     struct page *page;
 	void *address;
 	page = alloc_pages(GFP_KERNEL, 0);
-	//table t[] = ;
-	int data[] = {1,2,3};
+	table *t;
+	//int data[] = {1,2,3};
 	//char data[] = "hello linux";
+	for (i = 0; i < 10; ++i) {
+        t->bucket[i].key = NULL;
+    }
 	address = page_address(page);
-	memcpy(address, data, strlen(data));
+	memcpy(address, t, strlen(t));
 	printk(KERN_ALERT "%s\n", (char *)address);
     //printk("%d\n",t->bucket[1].key);
 	int	err;
