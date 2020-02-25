@@ -13,10 +13,11 @@ typedef struct{
 }Indirect;
 
 /*hash_test*/
-/*
+
 struct hashEntry
 {
-    struct inode * key;
+    //struct inode * key;
+    int key;
     struct buffer_head * bh;
     struct hashEntry* next;
 };
@@ -43,21 +44,20 @@ static void initHashTable(table * t)
     }
 }
 
-static inline int keyToIndex(struct inode * key)
+static inline int keyToIndex(int key)
 {
 	uint32_t	hash;
 
-	if(key->i_uid == NULL) 
+	if(key == NULL) 
 		return 0;
 	//for(hash = 0; strlen(key); key++)
 	//	hash = key->i_uid + (hash << 6) + (hash << 16) - hash;
 		//hash += 1; 
-	hash = key->i_uid % 13;
+	hash = key % 13;
 	return hash % 1024;
 }
 
-static struct buffer_head * findValueByKey(table* t , struct inode * key)
-{
+static struct buffer_head * findValueByKey(table* t , int key){
     int index;
     const entry* e;
     if (t == NULL || key == NULL) {
@@ -74,7 +74,7 @@ static struct buffer_head * findValueByKey(table* t , struct inode * key)
     }
     return NULL;
 }
-*/
+
 //end_test
 
 static inline int pfs_depth(int x)
@@ -282,11 +282,11 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int	depth;
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
-	/*
+	
 	table t;
     initHashTable(&t);
-    findValueByKey(t,inode);
-    */
+    findValueByKey(t,inode->ino);
+    
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
@@ -296,7 +296,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	}
 	else{}
 	*/
-	printk("%lld\n",inode->i_ino);
+	//printk("%lld\n",inode->i_ino);
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
 			return -EIO;
