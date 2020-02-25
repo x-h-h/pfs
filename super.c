@@ -304,7 +304,7 @@ static int __init init_pfs_fs(void)
         data[i] = i;
     }
 	address = page_address(page);
-	memcpy(address, data, strlen(date));
+	memcpy(address, data, strlen(data));
 	printk(KERN_ALERT "%s\n", (char *)address);
     //printk("%d\n",t->bucket[1].key);
 	int	err;
