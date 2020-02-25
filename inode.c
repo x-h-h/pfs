@@ -27,7 +27,7 @@ typedef struct hashEntry entry;
 
 struct hashTable
 {
-    entry bucket[1024];  //先默认定义16个桶
+    entry bucket[10];  //先默认定义16个桶
 };
  
 typedef struct hashTable table;
@@ -41,7 +41,7 @@ static void initHashTable(table * t)
     int i;
     if (t == NULL)return;
 
-    for (i = 0; i < 100; ++i) {
+    for (i = 0; i < 10; ++i) {
         t->bucket[i].key = NULL;
         t->bucket[i].bh = NULL;
         t->bucket[i].next = NULL;
@@ -290,7 +290,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	
 	table *t;
     initHashTable(t);
-    printk("%d\n",t->bucket[1023].key);
+    printk("%d\n",t->bucket[1].key);
     //findValueByKey(t,inode->ino);
     
 
