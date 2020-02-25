@@ -12,6 +12,73 @@
 MODULE_LICENSE("GPL");
 
 static struct kmem_cache *pfs_inode_cachep;
+/*hash_test*/
+
+struct hashEntry
+{
+    //struct inode * key;
+    int key;
+    struct buffer_head * bh;
+    struct hashEntry* next;
+};
+
+typedef struct hashEntry entry;
+
+struct hashTable
+{
+    entry bucket[10];  //先默认定义16个桶
+};
+ 
+typedef struct hashTable table;
+
+static void initHashTable(table * t)
+{
+	struct page *page;
+	void *address;
+	page = alloc_pages(GFP_KERNEL, 0);
+	address = page_address(page);
+    int i;
+    if (t == NULL)return;
+
+    for (i = 0; i < 10; ++i) {
+        t->bucket[i].key = NULL;
+        t->bucket[i].bh = NULL;
+        t->bucket[i].next = NULL;
+    }
+    memcpy(address, t, strlen(t));
+}
+
+static inline int keyToIndex(int key)
+{
+	uint32_t	hash;
+
+	if(key == NULL) 
+		return 0;
+	//for(hash = 0; strlen(key); key++)
+	//	hash = key->i_uid + (hash << 6) + (hash << 16) - hash;
+		//hash += 1; 
+	hash = key % 13;
+	return hash % 1024;
+}
+
+static struct buffer_head * findValueByKey(table* t , int key){
+    int index;
+    const entry* e;
+    if (t == NULL || key == NULL) {
+        return NULL;
+    }
+    index = keyToIndex(key);
+    e = &(t->bucket[index]);
+    if (e->key == NULL) return NULL;//这个桶还没有元素
+    while (e != NULL) {
+        if (key == e->key) {
+            return e->bh;    //找到了，返回值
+        }
+        e = e->next;
+    }
+    return NULL;
+}
+//end test
 
 static inline int64_t pfs_get_blocks(struct pfs_sb_info *sbi)
 {
@@ -224,6 +291,9 @@ static struct file_system_type pfs_fs_type = {
 
 static int __init init_pfs_fs(void)
 {
+	table *t;
+    initHashTable(t);
+    printk("%d\n",t->bucket[1].key);
 	int	err;
 
 	if((err = init_inodecache()))
