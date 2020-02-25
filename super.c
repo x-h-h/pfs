@@ -14,70 +14,81 @@ MODULE_LICENSE("GPL");
 static struct kmem_cache *pfs_inode_cachep;
 /*hash_test*/
 
-struct hashEntry
+struct hashtable
 {
     //struct inode * key;
     int key;
     //struct buffer_head * bh;
-    struct hashEntry* next;
+    struct hashtable* next;
 };
+typedef struct hashtable table;
 
-//typedef struct hashEntry entry;
 
-struct hashTable
-{
-    struct hashEntry bucket[10];  //先默认定义16个桶
-};
- 
-typedef struct hashTable table;
-/*
-static void initHashTable(table * t)
+static void initHashTable(table * t, int size, void * address)
 {
 	struct page *page;
-	void *address;
 	page = alloc_pages(GFP_KERNEL, 0);
 	address = page_address(page);
     int i;
     if (t == NULL)return;
 
-    for (i = 0; i < 10; ++i) {
-        t->bucket[i].key = NULL;
-        t->bucket[i].bh = NULL;
-        t->bucket[i].next = NULL;
+    for (i = 0; i < size; ++i) {
+        t[i]->key = NULL;
+        //t[i]->bh = NULL;
+        t[i]->next = NULL;
     }
     memcpy(address, t, strlen(t));
 }
-
+/*
 static inline int keyToIndex(int key)
 {
-	uint32_t	hash;
 
 	if(key == NULL) 
 		return 0;
-	//for(hash = 0; strlen(key); key++)
-	//	hash = key->i_uid + (hash << 6) + (hash << 16) - hash;
-		//hash += 1; 
-	hash = key % 13;
-	return hash % 1024;
+
+	return key % 1024;
 }
 
-static struct buffer_head * findValueByKey(table* t , int key){
+int insertEntry(table * t , int key , const struct buffer_head * bh)
+{
+    int index , vlen1 , vlen2;
+
+    if (t == NULL || key == NULL || bh == NULL) {
+        return -1;
+    }
+
+    index = keyToIndex(key);
+    if (t[index]->key == NULL) {
+        t[index]->key = key;
+        t[index]->bh = bh;
+    }
+    else {
+    	printk("busy key");
+        t[index]->key = key;
+        t[index]->bh = bh;
+    }
+    return index;
+}
+
+static struct buffer_head * findValueByKey(table * t , int key){
     int index;
-    const entry* e;
     if (t == NULL || key == NULL) {
         return NULL;
     }
     index = keyToIndex(key);
-    e = &(t->bucket[index]);
-    if (e->key == NULL) return NULL;//这个桶还没有元素
-    while (e != NULL) {
-        if (key == e->key) {
-            return e->bh;    //找到了，返回值
-        }
-        e = e->next;
+    if (key == t[index]->key) {
+        return t[index]->bh;    //找到了，返回值
     }
     return NULL;
-}*/
+}
+
+static void removeEntry(table* t , int64_t key){
+	int index;
+	index = keyToIndex(key);
+	t[index]->key = NULL;
+	t[index]->bh = NULL;
+}
+*/
 //end test
 
 static inline int64_t pfs_get_blocks(struct pfs_sb_info *sbi)
@@ -293,22 +304,9 @@ static int __init init_pfs_fs(void)
 {
 	//table *t;
     //initHashTable(t);
-    struct page *page;
-	void *address;
-	page = alloc_pages(GFP_KERNEL, 0);
-	table t[10];
-	//int data[];
-	//char data[] = "hello linux";
-	int i;
-	int j;
-	for (i = 0; i < 10; ++i) {
-        for(j = 0; j < 10; ++j)
-        {
-        	table[i]->bucket[j].key = i;
-        }
-    }
-	address = page_address(page);
-	memcpy(address, t, strlen(t));
+    void * address;
+    table t[10];
+    initHashTable(t,10,address);
 	printk(KERN_ALERT "%s\n", (char *)address);
     //printk("%d\n",t->bucket[1].key);
 	int	err;
