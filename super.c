@@ -13,7 +13,7 @@ MODULE_LICENSE("GPL");
 
 static struct kmem_cache *pfs_inode_cachep;
 /*hash_test*/
-
+/*
 struct hashEntry
 {
     //struct inode * key;
@@ -77,7 +77,7 @@ static struct buffer_head * findValueByKey(table* t , int key){
         e = e->next;
     }
     return NULL;
-}
+}*/
 //end test
 
 static inline int64_t pfs_get_blocks(struct pfs_sb_info *sbi)
@@ -293,13 +293,13 @@ static int __init init_pfs_fs(void)
 {
 	//table *t;
     //initHashTable(t);
-    struct page *page;
+    /*struct page *page;
 	void *address;
 	page = alloc_pages(GFP_KERNEL, 0);
 	char data[] = "hello linux";
 	address = page_address(page);
 	memcpy(address, data, strlen(data));
-	printk(KERN_ALERT "%s\n", (char *)address);
+	printk(KERN_ALERT "%s\n", (char *)address);*/
     //printk("%d\n",t->bucket[1].key);
 	int	err;
 
