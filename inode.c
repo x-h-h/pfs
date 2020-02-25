@@ -296,7 +296,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	}
 	else{}
 	*/
-	printk("%lld\n",i_ino);
+	printk("%lld\n",inode->i_ino);
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
 			return -EIO;
