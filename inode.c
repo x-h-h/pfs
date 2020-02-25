@@ -4,6 +4,7 @@
 #include	<linux/writeback.h>
 #include	<linux/buffer_head.h>
 #include	<linux/mpage.h>
+#include    <linux/slab.h>
 #include	"pfs.h"
 
 typedef struct{
