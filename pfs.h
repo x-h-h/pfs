@@ -29,7 +29,7 @@ struct pfs_dir_hash_info{
 	int64_t	off;	
 	struct buffer_head *bh; 
 };
-
+//sb->s_fs_info->s_mark
 
 static inline struct pfs_sb_info * PFS_SB(struct super_block *sb)
 {
