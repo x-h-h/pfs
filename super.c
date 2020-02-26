@@ -11,7 +11,7 @@
 
 MODULE_LICENSE("GPL");
 
-extern int data[3];
+int data[3];
 
 static struct kmem_cache *pfs_inode_cachep;
 

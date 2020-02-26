@@ -54,7 +54,6 @@ struct hashtable
 };
 
 extern struct hashtable *t;
-int data[3];
 
 struct pfs_super_block{ 	
 	int32_t	s_rev;
