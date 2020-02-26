@@ -304,11 +304,11 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
 	void * address;
-    //table t[1024];
+    table t[1024];
     if(sbi->s_spb->s_mark == 0)
     {
-    	//initHashTable(t,1024,address);
-    	sbi->s_spb->s_mark == 1;
+    	initHashTable(t,1024,address);
+    	sbi->s_spb->s_mark = 1;
     }
 
 	printk(KERN_ALERT "%p\n", address);
