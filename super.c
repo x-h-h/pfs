@@ -229,15 +229,12 @@ static int __init init_pfs_fs(void)
 	//table *t;
     //initHashTable(t);
     struct page *page;
-    void *address;
-    char data[] = "hello linux";
-
-    page = alloc_pages(GFP_KERNEL, 0);
-    address = page_address(page);
-
-    memcpy(address, data, strlen(data));
-    printk(KERN_ALERT "%s\n", (char *)address);
-    free_pages((unsigned long)address, 0);
+	void *address;
+	page = alloc_pages(GFP_KERNEL, 0);
+	char data[] = "hello linux";
+	address = page_address(page);
+	memcpy(address, data, strlen(data));
+	printk(KERN_ALERT "%s\n", (char *)address);
 
 	if((err = init_inodecache()))
 		return err;
