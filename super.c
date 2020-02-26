@@ -35,23 +35,22 @@ static void initHashTable(table * t, int size, void * address)
     for (i = 0; i < size; ++i) {
         t[i].key = NULL;
         //t[i]->bh = NULL;
-        t[i].next = NULL;
     }
     memcpy(address, t, strlen(t));
 }
-/*
+
 static inline int keyToIndex(int key)
 {
 
 	if(key == NULL) 
 		return 0;
-
+	printk("index success");
 	return key % 1024;
 }
 
-int insertEntry(table * t , int key , const struct buffer_head * bh)
+static int insertEntry(table * t , int key )//, const struct buffer_head * bh)
 {
-    int index , vlen1 , vlen2;
+    int index ;
 
     if (t == NULL || key == NULL || bh == NULL) {
         return -1;
@@ -60,16 +59,17 @@ int insertEntry(table * t , int key , const struct buffer_head * bh)
     index = keyToIndex(key);
     if (t[index]->key == NULL) {
         t[index]->key = key;
-        t[index]->bh = bh;
+        //t[index]->bh = bh;
     }
     else {
     	printk("busy key");
         t[index]->key = key;
-        t[index]->bh = bh;
+        //t[index]->bh = bh;
     }
+    printk("insert success");
     return index;
 }
-
+/*
 static struct buffer_head * findValueByKey(table * t , int key){
     int index;
     if (t == NULL || key == NULL) {
@@ -80,15 +80,16 @@ static struct buffer_head * findValueByKey(table * t , int key){
         return t[index]->bh;    //找到了，返回值
     }
     return NULL;
-}
+}*/
 
 static void removeEntry(table* t , int64_t key){
 	int index;
 	index = keyToIndex(key);
 	t[index]->key = NULL;
-	t[index]->bh = NULL;
+	//t[index]->bh = NULL;
+	printk("remove success");
 }
-*/
+
 //end test
 
 static inline int64_t pfs_get_blocks(struct pfs_sb_info *sbi)
@@ -305,10 +306,13 @@ static int __init init_pfs_fs(void)
 	//table *t;
     //initHashTable(t);
     void * address;
-    table t[10];
-    initHashTable(t,10,address);
-	printk(KERN_ALERT "%s\n", (char *)address);
+    table t[1024];
+    initHashTable(t,1024,address);
+	printk(KERN_ALERT "%p\n", address);
+	int index;
+	index = insertEntry(t,keyToIndex(1025));
     //printk("%d\n",t->bucket[1].key);
+    printk("index = %d\n",index);
 	int	err;
 
 	if((err = init_inodecache()))
