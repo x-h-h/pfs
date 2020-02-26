@@ -28,7 +28,7 @@ static void initHashTable(table * t, int size)
 {
 	//struct page *page;
 	//page = alloc_pages(GFP_KERNEL, 0);
-	t = table *kmalloc(100, 0);
+	t = (struct hashtable*)kmalloc(1024, 0);
 	//address = page_address(page);
     int i;
     if (t == NULL)return;
@@ -305,11 +305,11 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
-	struct page * page;
+	//struct page * page;
     table t[1024];
     if(sbi->s_spb->s_mark == 0)
     {
-    	initHashTable(t,1024,page);
+    	initHashTable(t,1024);
     	sbi->s_spb->s_mark = 1;
     }
 
