@@ -228,11 +228,11 @@ int main(int argc, char *argv[])
 	spb.s_mark = 0;
 	struct hashtable *index;
 	int mark;
-	for(mark = 0; mark < 8; mark++){
+	for(mark = 0; mark < 4; mark++){
 		index->key = -1;
 		index->bh = NULL;
 	}
-	memmove(spb.t, index, 64);
+	memmove(spb.t, index, 4);
 	memset(buf, 0, sizeof(buf));
 	for(i = 2; i < PFS_INDS_PER_BLOCK; i++)
 		buf[i - 2] = (int64_t)htole64(root + i);

@@ -4,7 +4,7 @@
 #define PFS_MAXNAMLEN	255
 #define PFS_BLOCKSFT	12	
 #define PFS_SECTORSIZ	512
-#define PFS_BLOCKSIZ	8192
+#define PFS_BLOCKSIZ	4096
 
 #define PFS_ININODES	64	
 #define PFS_INBLOCKS	512	
@@ -71,7 +71,7 @@ struct pfs_super_block{
 	char	s_magic[4];
 	char	s_depend[416];
 	int64_t s_mark;
-	struct hashtable t[8];
+	struct hashtable t[4];
 };
 
 struct pfs_inode{	
