@@ -313,24 +313,21 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     }
     //printk("%d\n", data[0]);
 
-	//int index;
-	//index = insertEntry(t, keyToIndex(inode->ino), bh);
+	int index;
+	index = insertEntry(t, keyToIndex(inode->ino), bh);
+	struct buffer_head *bh2;
+	bh2 = findValueByKey(t, inode->ino);
+	if(bh2 == bh)
+		printk("nice");
     
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
-	/*
-	if(dno = hash_map_search(inode)){
-		goto out;
-	}
-	else{}
-	*/
-	//printk("%lld\n",inode->i_ino);
+
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
 			return -EIO;
 		}
-		//hash_map_add(inode, dno);
 		goto out;
 	}
 	if(!(dno = pfs_bmap_alloc(inode, offset, depth))){
