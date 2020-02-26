@@ -300,19 +300,10 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	//printk(KERN_ALERT "%d\n", (int *)address);
     //printk("%d\n", data[0]);
     //printk("%d\n",(int64_t *)((char *)bh->b_data));
-	int index;
-	index = insertEntry(t, 10, bh);
-	struct buffer_head *bh2;
-	bh2 = findValueByKey(t, 10);
     
-
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
-	int i;
-	for(i = 0; i < 5; ++i)
-	{
-		printk("%d\n",offset[i]);
-	}
+	printk("%d\n", block);
 
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
