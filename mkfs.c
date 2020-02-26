@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
 	spb.s_mark = 0;
 	struct hashtable *index;
 	int mark;
-	for(mark = 0; mark < 64; mark++){
+	for(mark = 0; mark < 8; mark++){
 		index->key = -1;
 		index->bh = NULL;
 	}

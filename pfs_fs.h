@@ -71,7 +71,7 @@ struct pfs_super_block{
 	char	s_magic[4];
 	char	s_depend[416];
 	int64_t s_mark;
-	struct hashtable t[64];
+	struct hashtable t[8];
 };
 
 struct pfs_inode{	
