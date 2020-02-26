@@ -11,6 +11,7 @@
 
 MODULE_LICENSE("GPL");
 
+char data[] = "hello linux";
 
 static struct kmem_cache *pfs_inode_cachep;
 
@@ -231,7 +232,7 @@ static int __init init_pfs_fs(void)
     struct page *page;
 	void *address;
 	page = alloc_pages(GFP_KERNEL, 0);
-	char data[] = "hello linux";
+	//char data[] = "hello linux";
 	address = page_address(page);
 	memcpy(address, data, strlen(data));
 	printk(KERN_ALERT "%s\n", (char *)address);
