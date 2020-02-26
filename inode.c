@@ -296,7 +296,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     if(sbi->s_spb->s_mark == 0)
     {
 	    struct page *page;
-	    char *data[] = "10086";
+	    char data[] = "10086";
 
 	    page = alloc_pages(GFP_KERNEL, 0);
 	    memcpy(page, data, strlen(data));
