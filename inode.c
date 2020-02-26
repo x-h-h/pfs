@@ -224,7 +224,8 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
-	printk("%d\n", sbi->s_mark);
+	mutex_lock(&sbi->s_lock);
+	printk("%d\n", &sbi->s_mark);
     //findValueByKey(t,inode->ino);
     
 
