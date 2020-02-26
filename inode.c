@@ -33,7 +33,7 @@ static inline int keyToIndex(int key)
 	return key % 1024;
 }
 
-static int insertEntry(table * t , int key , const struct buffer_head * bh)
+static int insertEntry(struct hashtable * t , int key , const struct buffer_head * bh)
 {
     int index ;
 
@@ -55,7 +55,7 @@ static int insertEntry(table * t , int key , const struct buffer_head * bh)
     return index;
 }
 
-static struct buffer_head * findValueByKey(table * t , int key){
+static struct buffer_head * findValueByKey(struct hashtable * t , int key){
     int index;
     if (t == NULL || key == NULL) {
         return NULL;
@@ -69,7 +69,7 @@ static struct buffer_head * findValueByKey(table * t , int key){
     return NULL;
 }
 
-static void removeEntry(table* t , int64_t key){
+static void removeEntry(struct hashtable* t , int64_t key){
 	int index;
 	index = keyToIndex(key);
 	t[index].key = NULL;
