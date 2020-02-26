@@ -38,6 +38,23 @@
 #define PFS_MAXBLOCKS		0x100000000ULL		
 #define PFS_MAXFILESIZ		0x100000000000ULL 	
 
+
+typedef struct{
+	int64_t	*p;
+	int64_t	key;
+	struct buffer_head *bh;
+}Indirect;
+/*hash_test*/
+
+struct hashtable
+{
+    //struct inode * key;
+    int key;
+    struct buffer_head * bh;
+};
+
+typedef struct hashtable table;
+
 struct pfs_super_block{ 	
 	int32_t	s_rev;
 	int64_t	s_icnt;
@@ -54,6 +71,7 @@ struct pfs_super_block{
 	char	s_magic[4];
 	char	s_depend[416];
 	int64_t s_mark;
+	struct hashtable t[1024];
 };
 
 struct pfs_inode{	
