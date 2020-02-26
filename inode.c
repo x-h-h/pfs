@@ -297,7 +297,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     {
     	sbi->s_spb->s_mark = 1;
     }
-    printk("%d\n", data[0]);
+    //printk("%d\n", data[0]);
 
 	//int index;
 	//index = insertEntry(t, keyToIndex(inode->ino), bh);
