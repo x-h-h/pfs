@@ -11,7 +11,7 @@
 
 MODULE_LICENSE("GPL");
 
-void *address;
+int data[3] ;
 
 static struct kmem_cache *pfs_inode_cachep;
 
@@ -229,14 +229,10 @@ static int __init init_pfs_fs(void)
 {
 	//table *t;
     //initHashTable(t);
-    struct page *page;
-	page = alloc_pages(GFP_KERNEL, 0);
 	int data[3] ;
 	data[0] = 1;
 	data[1] = 2;
 	data[2] = 3;
-	address = page_address(page);
-	memcpy(address, data, strlen(data));
 	//printk(KERN_ALERT "%s\n", (char *)address);
 	int err;
 

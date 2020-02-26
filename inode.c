@@ -7,7 +7,7 @@
 #include    <linux/slab.h>
 #include	"pfs.h"
 
-extern void *address;
+extern int data[3];
 /*
 static void initHashTable(table * t, int size)
 {
@@ -292,7 +292,13 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
-	printk(KERN_ALERT "%s\n", (int *)address);
+	struct page *page;
+	page = alloc_pages(GFP_KERNEL, 0);
+	void *address;
+	address = page_address(page);
+	memcpy(address, data, strlen(data));
+	printk(KERN_ALERT "%d\n", (int *)address)
+
 	//printk("%d\n",sbi->s_spb->t[0].key);
 	//struct page * page;
     //table t[1024];
