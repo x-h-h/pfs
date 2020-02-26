@@ -240,8 +240,8 @@ static int __init init_pfs_fs(void)
 	int i;
 	for(i = 0; i < 128; ++i)
 	{
-		t.key = 0;
-		t.bh = NULL;
+		t->key = 0;
+		t->bh = NULL;
 	}
 
 	//printk(KERN_ALERT "%s\n", (char *)address);

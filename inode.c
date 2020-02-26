@@ -304,7 +304,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	void *address;
 	address = page_address(page);
 	memcpy(address, t, strlen(t));
-	printk(KERN_ALERT "%d\n", (int *)address)
+	printk(KERN_ALERT "%d\n", (int *)address);
 
 	//printk("%d\n",sbi->s_spb->t[0].key);
 	//struct page * page;
