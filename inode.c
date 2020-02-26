@@ -24,11 +24,11 @@ struct hashtable
 typedef struct hashtable table;
 
 
-static void initHashTable(table * t, int size, void * address)
+static void initHashTable(table * t, int size, struct page * page)
 {
-	struct page *page;
+	//struct page *page;
 	page = alloc_pages(GFP_KERNEL, 0);
-	address = page_address(page);
+	//address = page_address(page);
     int i;
     if (t == NULL)return;
 
@@ -36,7 +36,7 @@ static void initHashTable(table * t, int size, void * address)
         t[i].key = NULL;
         //t[i]->bh = NULL;
     }
-    memcpy(address, t, strlen(t));
+    memcpy(page, t, strlen(t));
 }
 
 static inline int keyToIndex(int key)
@@ -303,15 +303,15 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
-	void * address;
+	struct page * page;
     table t[1024];
     if(sbi->s_spb->s_mark == 0)
     {
-    	initHashTable(t,1024,address);
+    	initHashTable(t,1024,page);
     	sbi->s_spb->s_mark = 1;
     }
 
-	printk(KERN_ALERT "%p\n", address);
+	printk(KERN_ALERT "%p\n", page);
 	//int index;
 	//index = insertEntry(t,keyToIndex(1025));
     //printk("%d\n",t->bucket[1].key);
