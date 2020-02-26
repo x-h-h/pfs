@@ -38,7 +38,7 @@ static inline int keyToIndex(int key)
 
 	if(key == NULL) 
 		return 0;
-	printk("index success");
+	printk("index success\n");
 	return key % 1024;
 }
 
@@ -56,11 +56,11 @@ static int insertEntry(struct hashtable * t , int key , const struct buffer_head
         t[index].bh = bh;
     }
     else {
-    	printk("busy key");
+    	printk("busy key\n");
         t[index].key = key;
         t[index].bh = bh;
     }
-    printk("insert success");
+    printk("insert success\n");
     return index;
 }
 
@@ -71,10 +71,10 @@ static struct buffer_head * findValueByKey(struct hashtable * t , int key){
     }
     index = keyToIndex(key);
     if (key == t[index].key) {
-    	printk("find success");
+    	printk("find success\n");
         return t[index].bh;    //找到了，返回值
     }
-    printk("find error");
+    printk("find error\n");
     return NULL;
 }
 
@@ -83,7 +83,7 @@ static void removeEntry(struct hashtable* t , int64_t key){
 	index = keyToIndex(key);
 	t[index].key = NULL;
 	//t[index].bh = NULL;
-	printk("remove success");
+	printk("remove success\n");
 }
 
 //end test
@@ -312,7 +312,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     	sbi->s_spb->s_mark = 1;
     }
     //printk("%d\n", data[0]);
-
+    printk("%d\n",(int64_t *)((char *)bh->b_data);
 	int index;
 	index = insertEntry(t, 10, bh);
 	struct buffer_head *bh2;
