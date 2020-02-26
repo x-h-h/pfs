@@ -215,7 +215,7 @@ static int pfs_block_to_path(struct inode *inode, sector_t block, int64_t *offse
 	return n;
 }
 
-static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create, struct super_block *sbi)
+static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create, struct pfs_super_block *sbi)
 {
 	int64_t	dno;
 	int	depth;
