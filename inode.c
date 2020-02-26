@@ -295,7 +295,6 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     //table t[1024];
     if(sbi->s_spb->s_mark == 0)
     {
-    	int *data;
 	    struct page *page;
 	    char *data[] = "10086";
 
