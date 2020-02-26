@@ -33,7 +33,7 @@ static inline int keyToIndex(int key)
 	return key % 1024;
 }
 
-static int insertEntry(table * t , int key )//, const struct buffer_head * bh)
+static int insertEntry(table * t , int key , const struct buffer_head * bh)
 {
     int index ;
 
@@ -44,17 +44,17 @@ static int insertEntry(table * t , int key )//, const struct buffer_head * bh)
     index = keyToIndex(key);
     if (t[index].key == NULL) {
         t[index].key = key;
-        //t[index].bh = bh;
+        t[index].bh = bh;
     }
     else {
     	printk("busy key");
         t[index].key = key;
-        //t[index].bh = bh;
+        t[index].bh = bh;
     }
     printk("insert success");
     return index;
 }
-/*
+
 static struct buffer_head * findValueByKey(table * t , int key){
     int index;
     if (t == NULL || key == NULL) {
@@ -62,10 +62,12 @@ static struct buffer_head * findValueByKey(table * t , int key){
     }
     index = keyToIndex(key);
     if (key == t[index].key) {
+    	printk("find success");
         return t[index].bh;    //找到了，返回值
     }
+    printk("find error");
     return NULL;
-}*/
+}
 
 static void removeEntry(table* t , int64_t key){
 	int index;
@@ -288,7 +290,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
-	printk("%d\n",sbi->s_spb->t[0].key);
+	//printk("%d\n",sbi->s_spb->t[0].key);
 	//struct page * page;
     //table t[1024];
     if(sbi->s_spb->s_mark == 0)
@@ -297,12 +299,13 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     	sbi->s_spb->s_mark = 1;
     }
 
-	//int index;
-	//index = insertEntry(t,keyToIndex(1025));
+	int index;
+	index = insertEntry(t, keyToIndex(inode->ino), bh);
     //printk("%d\n",t->bucket[1].key);
     //printk("index = %d\n",index);
 	//printk("%d\n", &sbi->s_mark);
-    //findValueByKey(t,inode->ino);
+	struct buffer_head *bh2;
+    bh2 = findValueByKey(t,inode->ino);
     
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
