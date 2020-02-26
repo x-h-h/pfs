@@ -11,7 +11,14 @@
 
 MODULE_LICENSE("GPL");
 
-int data[3] ;
+struct hashtable
+{
+    //struct inode * key;
+    int key;
+    struct buffer_head * bh;
+};
+
+struct hashtable t[128];
 
 static struct kmem_cache *pfs_inode_cachep;
 
@@ -229,10 +236,14 @@ static int __init init_pfs_fs(void)
 {
 	//table *t;
     //initHashTable(t);
-	int data[3] ;
-	data[0] = 1;
-	data[1] = 2;
-	data[2] = 3;
+	struct hashtable t[128];
+	int i;
+	for(i = 0; i < 128; ++i)
+	{
+		t.key = 0;
+		t.bh = NULL;
+	}
+
 	//printk(KERN_ALERT "%s\n", (char *)address);
 	int err;
 

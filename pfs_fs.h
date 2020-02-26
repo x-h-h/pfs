@@ -46,14 +46,6 @@ typedef struct{
 }Indirect;
 /*hash_test*/
 
-struct hashtable
-{
-    //struct inode * key;
-    int key;
-    struct buffer_head * bh;
-};
-
-extern struct hashtable *t;
 
 struct pfs_super_block{ 	
 	int32_t	s_rev;
