@@ -229,8 +229,8 @@ int main(int argc, char *argv[])
 	struct hashtable index;
 	index.key = -1;
 	index.bh = NULL;
-	memmove(spb.t, index, 1024);
-	for(mark = 0;)
+	memmove(spb.t.key, index.key, 1024);
+	memmove(spb.t.bh, index.bh, 1024);
 	memset(buf, 0, sizeof(buf));
 	for(i = 2; i < PFS_INDS_PER_BLOCK; i++)
 		buf[i - 2] = (int64_t)htole64(root + i);
