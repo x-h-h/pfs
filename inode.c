@@ -215,14 +215,16 @@ static int pfs_block_to_path(struct inode *inode, sector_t block, int64_t *offse
 	return n;
 }
 
-static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create, struct pfs_super_block *sbi)
+static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh, int create)
 {
 	int64_t	dno;
 	int	depth;
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
 	
-	printk("%d\n",sbi->s_mark);
+	struct super_block *sb = inode->i_sb;
+	struct pfs_sb_info *sbi = PFS_SB(sb);
+	printk("%d\n", sbi->s_mark);
     //findValueByKey(t,inode->ino);
     
 
