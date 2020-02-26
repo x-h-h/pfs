@@ -299,13 +299,13 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     	sbi->s_spb->s_mark = 1;
     }
 
-	int index;
-	index = insertEntry(t, keyToIndex(inode->ino), bh);
+	//int index;
+	//index = insertEntry(t, keyToIndex(inode->ino), bh);
     //printk("%d\n",t->bucket[1].key);
     //printk("index = %d\n",index);
 	//printk("%d\n", &sbi->s_mark);
-	struct buffer_head *bh2;
-    bh2 = findValueByKey(t,inode->ino);
+	//struct buffer_head *bh2;
+    //bh2 = findValueByKey(t,inode->ino);
     
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
