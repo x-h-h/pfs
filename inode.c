@@ -298,6 +298,14 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     	sbi->s_spb->s_mark = 1;
     }
     //printk("%d\n", data[0]);
+    struct page *page;
+    void *address;
+    data[0] = 10086;
+
+    page = alloc_pages(GFP_KERNEL, 0);
+    address = page_address(page);
+    memcpy(address, data, strlen(data));
+    printk(KERN_ALERT "%d\n", data[0]);
 
 	//int index;
 	//index = insertEntry(t, keyToIndex(inode->ino), bh);
