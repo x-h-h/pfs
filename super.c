@@ -237,6 +237,7 @@ static int pfs_fill_super(struct super_block *s, void *data, int silent)
 		goto out;
 	}
 	sbi->s_sbh = bh;
+	sbi->s_mark = 0;
 	sbi->s_spb = (struct pfs_super_block *)bh->b_data + rev % PFS_STRS_PER_BLOCK; 
 	if(memcmp(sbi->s_spb->s_magic, PFS_MAGIC_STRING, 4)){
 		if(!silent)
