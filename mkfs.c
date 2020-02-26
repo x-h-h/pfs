@@ -229,8 +229,8 @@ int main(int argc, char *argv[])
 	struct hashtable *index;
 	int mark;
 	for(mark = 0; mark < 64; mark++){
-		index.key = -1;
-		index.bh = NULL;
+		index->key = -1;
+		index->bh = NULL;
 	}
 	memmove(spb.t, index, 64);
 	memset(buf, 0, sizeof(buf));
