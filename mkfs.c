@@ -225,7 +225,6 @@ int main(int argc, char *argv[])
 	spb.s_ihead = (int64_t)htole64(root + 1); 
 	spb.s_bcnt = (int64_t)htole64(PFS_INBLOCKS);
 	spb.s_bhead = (int64_t)htole64(root + 2 * PFS_STRS_PER_BLOCK); 
-	spb.s_mark = 0;
 	/*
 	struct hashtable *index;
 	int mark;

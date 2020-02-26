@@ -62,8 +62,6 @@ struct pfs_super_block{
 	int64_t	s_ilimit;	
 	char	s_magic[4];
 	char	s_depend[416];
-	int64_t s_mark;
-	//struct hashtable t[4];
 };
 
 struct pfs_inode{	

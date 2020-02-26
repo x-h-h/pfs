@@ -296,33 +296,23 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int64_t	offset[PFS_DEPTH];
 	printk("get_block\n");
 	
-	struct super_block *sb = inode->i_sb;
-	struct pfs_sb_info *sbi = PFS_SB(sb);
-	printk("%d\n",sbi->s_spb->s_mark);
-	struct page *page;
-	page = alloc_pages(GFP_KERNEL, 0);
-	void *address;
-	address = page_address(page);
 	//memcpy(address, t->key, strlen(t->key));
 	//printk(KERN_ALERT "%d\n", (int *)address);
-	printk(KERN_ALERT "%d\n", t[0].key);
-
-    if(sbi->s_spb->s_mark == 0)
-    {
-    	sbi->s_spb->s_mark = 1;
-    }
     //printk("%d\n", data[0]);
-    printk("%d\n",(int64_t *)((char *)bh->b_data);
+    //printk("%d\n",(int64_t *)((char *)bh->b_data));
 	int index;
 	index = insertEntry(t, 10, bh);
 	struct buffer_head *bh2;
 	bh2 = findValueByKey(t, 10);
-	if(bh2 == bh)
-		printk("nice");
     
 
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
+	int i;
+	for(i = 0; i < 5; ++i)
+	{
+		printk("%d\n",offset[i]);
+	}
 
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
