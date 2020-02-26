@@ -226,6 +226,7 @@ int main(int argc, char *argv[])
 	spb.s_bcnt = (int64_t)htole64(PFS_INBLOCKS);
 	spb.s_bhead = (int64_t)htole64(root + 2 * PFS_STRS_PER_BLOCK); 
 	spb.s_mark = 0;
+	/*
 	struct hashtable *index;
 	int mark;
 	for(mark = 0; mark < 4; mark++){
@@ -234,6 +235,7 @@ int main(int argc, char *argv[])
 	}
 	memmove(spb.t, index, 4);
 	memset(buf, 0, sizeof(buf));
+	*/
 	for(i = 2; i < PFS_INDS_PER_BLOCK; i++)
 		buf[i - 2] = (int64_t)htole64(root + i);
 	if(pfs_bwrite(fd, root + 1, buf, 1) == -1){ 
