@@ -12,7 +12,85 @@ typedef struct{
 	int64_t	key;
 	struct buffer_head *bh;
 }Indirect;
+/*hash_test*/
 
+struct hashtable
+{
+    //struct inode * key;
+    int key;
+    //struct buffer_head * bh;
+    struct hashtable* next;
+};
+typedef struct hashtable table;
+
+
+static void initHashTable(table * t, int size, void * address)
+{
+	struct page *page;
+	page = alloc_pages(GFP_KERNEL, 0);
+	address = page_address(page);
+    int i;
+    if (t == NULL)return;
+
+    for (i = 0; i < size; ++i) {
+        t[i].key = NULL;
+        //t[i]->bh = NULL;
+    }
+    memcpy(address, t, strlen(t));
+}
+
+static inline int keyToIndex(int key)
+{
+
+	if(key == NULL) 
+		return 0;
+	printk("index success");
+	return key % 1024;
+}
+
+static int insertEntry(table * t , int key )//, const struct buffer_head * bh)
+{
+    int index ;
+
+    if (t == NULL || key == NULL ) {
+        return -1;
+    }
+
+    index = keyToIndex(key);
+    if (t[index].key == NULL) {
+        t[index].key = key;
+        //t[index].bh = bh;
+    }
+    else {
+    	printk("busy key");
+        t[index].key = key;
+        //t[index].bh = bh;
+    }
+    printk("insert success");
+    return index;
+}
+/*
+static struct buffer_head * findValueByKey(table * t , int key){
+    int index;
+    if (t == NULL || key == NULL) {
+        return NULL;
+    }
+    index = keyToIndex(key);
+    if (key == t[index].key) {
+        return t[index].bh;    //找到了，返回值
+    }
+    return NULL;
+}*/
+
+static void removeEntry(table* t , int64_t key){
+	int index;
+	index = keyToIndex(key);
+	t[index].key = NULL;
+	//t[index].bh = NULL;
+	printk("remove success");
+}
+
+//end test
 
 //end_test
 
@@ -225,6 +303,19 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
+	void * address;
+    table t[1024];
+    if(sbi->s_spb->s_mark == 0)
+    {
+    	initHashTable(t,1024,address);
+    	sbi->s_spb->s_mark == 1;
+    }
+
+	printk(KERN_ALERT "%p\n", address);
+	int index;
+	index = insertEntry(t,keyToIndex(1025));
+    //printk("%d\n",t->bucket[1].key);
+    printk("index = %d\n",index);
 	//printk("%d\n", &sbi->s_mark);
     //findValueByKey(t,inode->ino);
     
