@@ -227,6 +227,9 @@ static int __init init_pfs_fs(void)
 {
 	//table *t;
     //initHashTable(t);
+    data = (int*)kmalloc(100, 0);
+    data[0] = 0;
+
 	int	err;
 
 	if((err = init_inodecache()))

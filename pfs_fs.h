@@ -53,7 +53,8 @@ struct hashtable
     struct buffer_head * bh;
 };
 
-typedef struct hashtable table;
+extern struct hashtable *t;
+extern int *data;
 
 struct pfs_super_block{ 	
 	int32_t	s_rev;
