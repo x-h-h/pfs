@@ -292,7 +292,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	struct super_block *sb = inode->i_sb;
 	struct pfs_sb_info *sbi = PFS_SB(sb);
 	printk("%d\n",sbi->s_spb->s_mark);
-	printk(KERN_ALERT "%s\n", (char *)address);
+	printk(KERN_ALERT "%s\n", (int *)address);
 	//printk("%d\n",sbi->s_spb->t[0].key);
 	//struct page * page;
     //table t[1024];
