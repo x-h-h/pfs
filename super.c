@@ -235,6 +235,7 @@ static int __init init_pfs_fs(void)
 	address = page_address(page);
 	memcpy(address, data, strlen(data));
 	printk(KERN_ALERT "%s\n", (char *)address);
+	int err;
 
 	if((err = init_inodecache()))
 		return err;
