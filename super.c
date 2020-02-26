@@ -11,7 +11,6 @@
 
 MODULE_LICENSE("GPL");
 
-int data[3];
 
 static struct kmem_cache *pfs_inode_cachep;
 
@@ -231,14 +230,25 @@ static int __init init_pfs_fs(void)
     //initHashTable(t);
     struct page *page;
     void *address;
-    data[0] = 10;
-    data[1] = 11;
-    data[2] = 12;
+    char data[] = "hello linux";
 
     page = alloc_pages(GFP_KERNEL, 0);
-    memcpy(address, data, strlen(data));
-    printk(KERN_ALERT "%d\n", (int *)address);
-	int	err;
+    if (!page)
+    {
+                err("alloc_pages");
+                return -1;
+        }
+
+        address = page_address(page);
+        if (!address)
+        {
+                err("page_address");
+                goto err;
+        }
+
+        memcpy(address, data, strlen(data));
+        printk(KERN_ALERT "%s\n", (char *)address);
+        free_pages((unsigned long)address, 0);
 
 	if((err = init_inodecache()))
 		return err;
