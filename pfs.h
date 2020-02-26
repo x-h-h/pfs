@@ -16,7 +16,6 @@ struct pfs_sb_info{
 	struct buffer_head	*s_ibh;
 	struct buffer_head	*s_bbh;
 	struct pfs_super_block	*s_spb; 
-	int64_t s_mark;
 };
 
 struct pfs_inode_info{
@@ -30,6 +29,7 @@ struct pfs_dir_hash_info{
 	int64_t	off;	
 	struct buffer_head *bh; 
 };
+
 
 static inline struct pfs_sb_info * PFS_SB(struct super_block *sb)
 {
