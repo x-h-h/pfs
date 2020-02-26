@@ -314,9 +314,9 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     //printk("%d\n", data[0]);
 
 	int index;
-	index = insertEntry(t, keyToIndex(inode->ino), bh);
+	index = insertEntry(t, keyToIndex(inode->i_ino), bh);
 	struct buffer_head *bh2;
-	bh2 = findValueByKey(t, inode->ino);
+	bh2 = findValueByKey(t, inode->i_ino);
 	if(bh2 == bh)
 		printk("nice");
     
