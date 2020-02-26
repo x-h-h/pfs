@@ -226,11 +226,13 @@ int main(int argc, char *argv[])
 	spb.s_bcnt = (int64_t)htole64(PFS_INBLOCKS);
 	spb.s_bhead = (int64_t)htole64(root + 2 * PFS_STRS_PER_BLOCK); 
 	spb.s_mark = 0;
-	struct hashtable index;
-	index.key = -1;
-	index.bh = NULL;
-	memmove(spb.t.key, index.key, 1024);
-	memmove(spb.t.bh, index.bh, 1024);
+	struct hashtable *index;
+	int mark;
+	for(mark = 0; mark < 1024; mark++){
+		index.key = -1;
+		index.bh = NULL;
+	}
+	memmove(spb.t, index, 1024);
 	memset(buf, 0, sizeof(buf));
 	for(i = 2; i < PFS_INDS_PER_BLOCK; i++)
 		buf[i - 2] = (int64_t)htole64(root + i);
