@@ -52,19 +52,19 @@ static int insertEntry(table * t , int key )//, const struct buffer_head * bh)
 {
     int index ;
 
-    if (t == NULL || key == NULL || bh == NULL) {
+    if (t == NULL || key == NULL ) {
         return -1;
     }
 
     index = keyToIndex(key);
-    if (t[index]->key == NULL) {
-        t[index]->key = key;
-        //t[index]->bh = bh;
+    if (t[index].key == NULL) {
+        t[index].key = key;
+        //t[index].bh = bh;
     }
     else {
     	printk("busy key");
-        t[index]->key = key;
-        //t[index]->bh = bh;
+        t[index].key = key;
+        //t[index].bh = bh;
     }
     printk("insert success");
     return index;
@@ -76,8 +76,8 @@ static struct buffer_head * findValueByKey(table * t , int key){
         return NULL;
     }
     index = keyToIndex(key);
-    if (key == t[index]->key) {
-        return t[index]->bh;    //找到了，返回值
+    if (key == t[index].key) {
+        return t[index].bh;    //找到了，返回值
     }
     return NULL;
 }*/
@@ -85,8 +85,8 @@ static struct buffer_head * findValueByKey(table * t , int key){
 static void removeEntry(table* t , int64_t key){
 	int index;
 	index = keyToIndex(key);
-	t[index]->key = NULL;
-	//t[index]->bh = NULL;
+	t[index].key = NULL;
+	//t[index].bh = NULL;
 	printk("remove success");
 }
 
