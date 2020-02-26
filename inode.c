@@ -303,8 +303,8 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	page = alloc_pages(GFP_KERNEL, 0);
 	void *address;
 	address = page_address(page);
-	memcpy(address, t->key, strlen(t->key));
-	printk(KERN_ALERT "%d\n", (int *)address);
+	//memcpy(address, t->key, strlen(t->key));
+	//printk(KERN_ALERT "%d\n", (int *)address);
 	printk(KERN_ALERT "%d\n", t[0].key);
 
     if(sbi->s_spb->s_mark == 0)
