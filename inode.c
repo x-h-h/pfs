@@ -276,7 +276,8 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
 	int64_t	dno;
 	int	depth;
 	int64_t	offset[PFS_DEPTH];
-	printk("get_block\n");
+	printk(KERN_INFO "TEST: get block [%lu] of inode [%llu]\n", block,
+	       inode->i_ino);
 	
 	//memcpy(address, t->key, strlen(t->key));
 	//printk(KERN_ALERT "%d\n", (int *)address);
@@ -488,7 +489,7 @@ struct inode * pfs_iget(struct super_block *sb, int64_t ino)
 	pfs_set_inode(inode, new_decode_dev(PFS_I(inode)->i_addr[0]));
 	brelse(bh);
 	unlock_new_inode(inode);
-	printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
+	//printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
 	return inode;
 }
 
@@ -536,6 +537,7 @@ err:
 
 int pfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 {
+	printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
 	return pfs_update_inode(inode, wbc);
 }
 

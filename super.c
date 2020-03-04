@@ -253,13 +253,22 @@ static int __init init_pfs_fs(void)
 		return err;
 	if((err = register_filesystem(&pfs_fs_type))) 
 		destroy_inodecache(); 
+	if (err == 0)  
+        printk(KERN_INFO "Sucessfully registered pfs\n");  
+    else  
+        printk(KERN_ERR "Failed to register pfs. Error: [%d]\n", err); 
 	return err;
 }
 
 static void __exit exit_pfs_fs(void)
 {
-	unregister_filesystem(&pfs_fs_type); 
+	int ret;
+	ret = unregister_filesystem(&pfs_fs_type); 
 	destroy_inodecache();
+	if (ret == 0)  
+        printk(KERN_INFO "Sucessfully unregistered HUST_fs\n");  
+    else  
+        printk(KERN_ERR "Failed to unregister HUST_fs. Error: [%d]\n", ret); 
 }
 
 module_init(init_pfs_fs);
