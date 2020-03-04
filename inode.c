@@ -11,27 +11,11 @@ struct hashtable
 {
     //struct inode * key;
     int key;
-    struct buffer_head * bh;
+    sector_t block;
 };
 
 extern struct hashtable t[128];
-/*
-static void initHashTable(table * t, int size)
-{
-	//struct page *page;
-	//page = alloc_pages(GFP_KERNEL, 0);
-	t = (struct hashtable*)kmalloc(1024, 0);
-	//address = page_address(page);
-    int i;
-    if (t == NULL)return;
 
-    for (i = 0; i < size; ++i) {
-        t[i].key = NULL;
-        //t[i]->bh = NULL;
-    }
-    //memcpy(page, t, strlen(t));
-    printk(KERN_ALERT "%p\n", t);
-}*/
 
 static inline int keyToIndex(int key)
 {
@@ -42,7 +26,7 @@ static inline int keyToIndex(int key)
 	return key % 1024;
 }
 
-static int insertEntry(struct hashtable * t , int key , const struct buffer_head * bh)
+static int insertEntry(struct hashtable * t , int key , sector_t block)
 {
     int index ;
 
@@ -53,18 +37,18 @@ static int insertEntry(struct hashtable * t , int key , const struct buffer_head
     index = keyToIndex(key);
     if (t[index].key == NULL) {
         t[index].key = key;
-        t[index].bh = bh;
+        t[index].block = block;
     }
     else {
     	printk("busy key\n");
         t[index].key = key;
-        t[index].bh = bh;
+        t[index].block = block;
     }
     printk("insert success\n");
     return index;
 }
 
-static struct buffer_head * findValueByKey(struct hashtable * t , int key){
+static sector_t * findValueByKey(struct hashtable * t , int key){
     int index;
     if (t == NULL || key == NULL) {
         return NULL;
@@ -72,7 +56,7 @@ static struct buffer_head * findValueByKey(struct hashtable * t , int key){
     index = keyToIndex(key);
     if (key == t[index].key) {
     	printk("find success\n");
-        return t[index].bh;    //找到了，返回值
+        return t[index].block;    //找到了，返回值
     }
     printk("find error\n");
     return NULL;
@@ -82,11 +66,9 @@ static void removeEntry(struct hashtable* t , int64_t key){
 	int index;
 	index = keyToIndex(key);
 	t[index].key = NULL;
-	//t[index].bh = NULL;
+	t[index].block = NULL;
 	printk("remove success\n");
 }
-
-//end test
 
 //end_test
 
@@ -511,6 +493,7 @@ struct inode * pfs_iget(struct super_block *sb, int64_t ino)
 
 int pfs_free_inode(struct inode *inode)
 {
+	printk(KERN_INFO "TEST Free: Free inode [%lu]\n", inode->i_ino);
 	int	err;
 	struct pfs_sb_info *sbi = PFS_SB(inode->i_sb);
 
@@ -552,11 +535,13 @@ err:
 
 int pfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 {
+	printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
 	return pfs_update_inode(inode, wbc);
 }
 
 void pfs_evict_inode(struct inode *inode)
 {
+	printk(KERN_INFO "TEST evict: Clearing inode [%lu]\n", inode->i_ino);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
 	truncate_inode_pages_final(&inode->i_data);
 #else
