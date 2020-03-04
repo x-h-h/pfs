@@ -76,7 +76,7 @@ static struct inode * pfs_alloc_inode(struct super_block *sb)
 
         if(!(ei = (struct pfs_inode_info *)kmem_cache_alloc(pfs_inode_cachep, GFP_KERNEL)))
                 return NULL;
-        printk(KERN_INFO "TEST alloc: alloc inode [%lu]\n", &ei->vfs_inode->i_ino);
+        //printk(KERN_INFO "TEST alloc: alloc inode [%lu]\n", &ei->vfs_inode->i_ino);
         return &ei->vfs_inode;
 }
 
