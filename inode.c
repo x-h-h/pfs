@@ -286,7 +286,7 @@ static int pfs_get_block(struct inode *inode, sector_t block, struct buffer_head
     
 	if(unlikely(!(depth = pfs_block_to_path(inode, block, offset)))) 
 		return -EIO;
-	printk("%d\n", block);
+	//printk("%d\n", block);
 
 	if(!create){
 		if(!(dno = pfs_bmap(inode, offset, depth))){
@@ -537,7 +537,7 @@ err:
 
 int pfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 {
-	printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
+	//printk(KERN_INFO "TEST write: write inode [%lu]\n", inode->i_ino);
 	return pfs_update_inode(inode, wbc);
 }
 
