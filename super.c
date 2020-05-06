@@ -266,7 +266,7 @@ static void __exit exit_pfs_fs(void)
 	ret = unregister_filesystem(&pfs_fs_type); 
 	destroy_inodecache();
 	if (ret == 0)  
-        printk(KERN_INFO "Sucessfully unregistered HUST_fs\n");  
+        printk(KERN_INFO "Sucessfully unregistered pfs\n");  
     else  
         printk(KERN_ERR "Failed to unregister HUST_fs. Error: [%d]\n", ret); 
 }
