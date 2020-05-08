@@ -268,7 +268,7 @@ static void __exit exit_pfs_fs(void)
 	if (ret == 0)  
         printk(KERN_INFO "Sucessfully unregistered pfs\n");  
     else  
-        printk(KERN_ERR "Failed to unregister HUST_fs. Error: [%d]\n", ret); 
+        printk(KERN_ERR "Failed to unregister pfs. Error: [%d]\n", ret); 
 }
 
 module_init(init_pfs_fs);
