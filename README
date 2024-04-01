@@ -2,8 +2,7 @@ name: pfs
 Revision: 1.0
 
 Overview: 
-	pfs is a filesystem drive for linux, it supports the mininum kernel version is 3.11. now, it's a test verson, 
-	if you have any suggestions or find bugs, please contact me(nnsmgsone@gmail.com).
+	pfs is a filesystem drive for linux, it supports the mininum kernel version is 3.11. 
 
 LIMITS:
 	partition size: 32ZB
